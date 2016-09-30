@@ -4,7 +4,7 @@ import rospy
 import numpy as np
 
 from motion import Motion
-from sensor import Sensing
+from sensing import Sensors
 
 class Adventurebot():
     def __init__(self):
@@ -19,18 +19,24 @@ class Adventurebot():
         rate = rospy.Rate(10)
 
         self.mover = Motion()
-        self.sensors = Sensing()
+        self.sensors = Sensors()
 
         while not rospy.is_shutdown():
 
-            if (sensors.wheeldrop):
-                self.mover.stop()
+            if (self.sensors.wheeldrop):
+                self.mover.stop(True)
 
-            elif (sensors.obstacle):
-                self.mover.direction = sensors.reccomended_turn
-                mover.avoidObstable()
+            elif (self.sensors.obstacle):
+                self.mover.avoidObstable(self.sensors.reccomended_turn)
             
             else:
-                mover.walk()
+                self.mover.walk()
+
+    def shutdown(self):
+        rospy.loginfo("goodbye, world")
+        self.mover.stop(True)
+        rospy.sleep(2)
+
+myBot = Adventurebot()
 
         

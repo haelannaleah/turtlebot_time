@@ -19,7 +19,7 @@ class Sensors():
 
         # subscribe to depth data
         self.depth_img = None
-        self.obstable = False
+        self.obstacle = False
         rospy.Subscriber('/camera/depth/image', Image, self._depthCallback)
 
         # subscribe to odometry
@@ -34,7 +34,7 @@ class Sensors():
         rospy.Subscriber('mobile_base/events/clif', CliffEvent, self._cliffCallback)
 
         # subscribe to wheel drop sensor
-        self.wheel_drop = False
+        self.wheeldrop = False
         rospy.Subscriber('mobile_base/events/wheel_drop', WheelDropEvent, self._wheelDropCallback)
 
     def _ekfCallback(self, data):
@@ -62,26 +62,26 @@ class Sensors():
 
     def _depthCallback(self, data):
         global TURN_LEFT, TURN_RIGHT
+        self.depth_img = self.bridge.imgmsg_to_cv2(data, 'passthrough')
+
+        # get slice to check distance on
+        img_height, img_width = self.depth_img.shape
+        s_height, s_width = (img_height, img_width * .3)
+        w_center = img_width // 2
+
+        # apply blur to smooth out irregularities
+        sample = cv2.medianBlue(self.depth_img[0:s_height, w_center - s_width : w_center + s_width], 5)
+
+        # check distance to closest object
         try:
-            self.depth_img = self.bridge.imgmsg_to_cv2(data, 'passthrough')
-
-            # get slice to check distance on
-            img_height, img_width = self.depth_img.shape
-            s_height, s_width = (img_height, img_width * .3)
-            w_center = img_width // 2
-
-            # apply blur to smooth out irregularities
-            sample = cv2.medianBlue(self.depth_img[0:s_height, w_center - s_width : w_center + s_width], 5)
-
-            # check distance to closest object
-            try:
-                min_index = np.nanargmin(sample[np.nonzero(sample)])
-            except ValueError:
-                rospy.logerror("Encountered all NaN slice in depth image.")
-                return
+            min_index = np.nanargmin(sample[np.nonzero(sample)])
+        except ValueError:
+            rospy.logerror("Encountered all NaN slice in depth image.")
+            return
             
-            if sample[min_index] < self._DIST_THRESH and not self.obstacle and not self.bump:
-                self.reccomended_turn = TURN_RIGHT if min_index[1] < w_center else TURN_LEFT
-                self.obstacle = True
-            else:
-                self.obstacle = False
+        if sample[min_index] < self._DIST_THRESH and not self.obstacle and not self.bump:
+            self.reccomended_turn = TURN_RIGHT if min_index[1] < w_center else TURN_LEFT
+            self.obstacle = True
+        else:
+            self.obstacle = False
+        

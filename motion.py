@@ -1,6 +1,6 @@
 import cv2
 import rospy
-from geometry messages.msg import Twist
+from geometry_msgs.msg import Twist
 
 from math import radians
 from time import time
@@ -28,7 +28,7 @@ class Motion():
             self.accel_time = time()
         
         # otherwise, if it's time to increment speed...
-        elif time() - self.accel_time > self.ACCEL_TIME:
+        elif time() - self.accel_time > self._ACCEL_TIME:
             self.move_cmd.linear.x += delta
             self.accel_time = False
 
@@ -59,7 +59,7 @@ class Motion():
             self.accelerate(self._ACCEL_DELTA)
         else:
             self.move_cmd.linear.x = self._LIN_SPEED
-        self.move_cmd.angula.z = 0
+        self.move_cmd.angular.z = 0
         self._publish()
 
     def _publish(self):
