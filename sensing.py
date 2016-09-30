@@ -20,6 +20,7 @@ class Sensors():
         # subscribe to depth data
         self.depth_img = None
         self.obstacle = False
+        self.rec_turn = 1
         rospy.Subscriber('/camera/depth/image', Image, self._depthCallback)
 
         # subscribe to odometry
@@ -41,8 +42,7 @@ class Sensors():
         pass
     
     def _bumperCallback(self, data):
-        if not self.bump:
-            self.bump = True
+        self.bump = (data.state == 1)
         
         rospy.logwarn("Bumper event: " + str(data))
 
@@ -70,18 +70,22 @@ class Sensors():
         w_center = img_width // 2
 
         # apply blur to smooth out irregularities
-        sample = cv2.medianBlue(self.depth_img[0:s_height, w_center - s_width : w_center + s_width], 5)
+        sample = cv2.medianBlur(self.depth_img[0:s_height, w_center - s_width : w_center + s_width], 5)
 
         # check distance to closest object
         try:
             min_index = np.nanargmin(sample[np.nonzero(sample)])
         except ValueError:
-            rospy.logerror("Encountered all NaN slice in depth image.")
-            return
-            
-        if sample[min_index] < self._DIST_THRESH and not self.obstacle and not self.bump:
-            self.reccomended_turn = TURN_RIGHT if min_index[1] < w_center else TURN_LEFT
+            rospy.logerr("Encountered all NaN slice in depth image.")
             self.obstacle = True
+            return
+
+        min_index = np.unravel_index(min_index, sample.shape)
+
+        if sample[min_index] < self._DIST_THRESH:
+            if not self.obstacle and not self.bump:
+                self.rec_turn = TURN_RIGHT if min_index[1] < w_center else TURN_LEFT
+                self.obstacle = True
         else:
             self.obstacle = False
         

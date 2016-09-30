@@ -14,7 +14,7 @@ class Motion():
         self.accel_time = False
         
         self._ROT_SPEED = radians(60)
-        self._LIN_SPEED = 0.1
+        self._LIN_SPEED = 0.2
         self._ACCEL_TIME = 0.1
         self._ACCEL_DELTA = 0.025
         
@@ -42,13 +42,13 @@ class Motion():
         # otherwise, turn away!
         else:
             self.move_cmd.linear.x = 0
-            self.move_cmd.angular = rec_turn * self._ROT_SPEED
+            self.move_cmd.angular.z = rec_turn * self._ROT_SPEED
 
         self._publish()
 
     def stop(self, now=False):        
         if not now and self.move_cmd.linear.x > 0:
-            self.accelerate(-self._ACCEL)
+            self.accelerate(-self._ACCEL_DELTA)
         else:
             self.move_cmd.linear.x = 0
         self.move_cmd.angular.z = 0

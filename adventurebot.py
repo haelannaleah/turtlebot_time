@@ -23,11 +23,17 @@ class Adventurebot():
 
         while not rospy.is_shutdown():
 
-            if (self.sensors.wheeldrop):
+            if (self.sensors.wheeldrop or self.sensors.cliff):
                 self.mover.stop(True)
 
-            elif (self.sensors.obstacle):
-                self.mover.avoidObstable(self.sensors.reccomended_turn)
+            elif (self.sensors.bump):
+                if self.mover.move_cmd.linear.x > 0:
+                    self.mover.stop(True)
+                else:
+                    self.mover.avoidObstacle(self.sensors.rec_turn)
+
+            elif (self.sensors.obstacle or self.sensors.bump):
+                self.mover.avoidObstacle(self.sensors.rec_turn)
             
             else:
                 self.mover.walk()
