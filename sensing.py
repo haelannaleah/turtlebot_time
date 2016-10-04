@@ -24,7 +24,7 @@ class Sensors():
         rospy.Subscriber('/camera/depth/image', Image, self._depthCallback)
 
         # subscribe to odometry
-        rospy.Subscriber('robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
+        rospy.Subscriber('/robot_pose_ekf/robot_pose_ekf', PoseWithCovarianceStamped, self._ekfCallback)
 
         # subscribe to bump sensor
         self.bump = False
@@ -39,7 +39,7 @@ class Sensors():
         rospy.Subscriber('mobile_base/events/wheel_drop', WheelDropEvent, self._wheelDropCallback)
 
     def _ekfCallback(self, data):
-        pass
+        print data
     
     def _bumperCallback(self, data):
         self.bump = (data.state == 1)
