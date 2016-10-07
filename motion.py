@@ -1,9 +1,15 @@
 import cv2
 import rospy
-from geometry_msgs.msg import Twist
+import tf
+import numpy as np
+from copy import deepcopy
+from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
 
-from math import radians
+from math import radians, atan2
 from time import time
+
+TURN_LEFT = 1
+TURN_RIGHT = -1
 
 class Motion():
     def __init__(self):
@@ -64,3 +70,48 @@ class Motion():
 
     def _publish(self):
         self.move_publisher.publish(self.move_cmd)
+
+class Navigation(Motion):
+    def __init__(self):
+        Motion.__init__(self)
+
+        self.start_pose = None
+        self.cur_pose = None
+        rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
+
+    def returnHome(self):
+        # compute angle to home
+        desired_turn = atan2(self.start_pose[0][1] - self.cur_pose[0][1], self.start_pose[0][0] - self.cur_pose[0][0])
+        print desired_turn
+        print self.cur_pose[1]
+
+        if not np.isclose(self.cur_pose[1], desired_turn, rtol=0.1):
+            if self.move_cmd.linear.x > 0:
+                print "slowing"
+                self.accelerate(-self._ACCEL_DELTA)
+                self.move_cmd.angular.z = 0
+                turn = None
+
+            else:
+                print "turning"
+                turn = TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
+                self.move_cmd.linear.x = 0
+                self.move_cmd.angular.z = turn * self._ROT_SPEED
+            self._publish()
+            return turn
+
+        else:
+            print "walking home"
+            self.walk()
+
+        return None
+
+    def extractPose(self,p, q):
+        """Given a quaternion q,extract an angle."""
+        return ((p.x,p.y), tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
+
+    def _ekfCallback(self, data):
+        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+        
+        if self.start_pose is None:
+            self.start_pose = deepcopy(self.cur_pose)

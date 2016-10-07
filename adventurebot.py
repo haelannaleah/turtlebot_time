@@ -2,7 +2,7 @@ import cv2
 import rospy
 import numpy as np
 
-from motion import Motion
+from motion import Motion, Navigation
 from sensing import Sensors
 
 class Adventurebot():
@@ -17,8 +17,10 @@ class Adventurebot():
         # set global refresh rate
         rate = rospy.Rate(10)
 
-        self.mover = Motion()
+        self.mover = Navigation()
         self.sensors = Sensors()
+
+        turn = None
 
         while not rospy.is_shutdown():
 
@@ -29,13 +31,16 @@ class Adventurebot():
                 if self.mover.move_cmd.linear.x > 0:
                     self.mover.stop(True)
                 else:
-                    self.mover.avoidObstacle(self.sensors.rec_turn)
+                    self.mover.avoidObstacle(self.sensors.rec_turn if turn is None else turn)
 
-            elif (self.sensors.obstacle or self.sensors.bump):
-                self.mover.avoidObstacle(self.sensors.rec_turn)
+            elif (self.sensors.obstacle):
+                self.mover.avoidObstacle(self.sensors.rec_turn if turn is None else turn)
             
-            else:
+            elif self.sensors.bump_count < 5:
                 self.mover.walk()
+
+            else: 
+                turn = self.mover.returnHome()
 
     def shutdown(self):
         rospy.loginfo("goodbye, world")

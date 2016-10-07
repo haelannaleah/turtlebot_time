@@ -1,6 +1,7 @@
 import rospy
 import cv2
 import numpy as np
+import tf
 
 from cv_bridge import CvBridge, CvBridgeError
 from geometry_msgs.msg import PoseWithCovarianceStamped
@@ -24,10 +25,13 @@ class Sensors():
         rospy.Subscriber('/camera/depth/image', Image, self._depthCallback)
 
         # subscribe to odometry
-        rospy.Subscriber('/robot_pose_ekf/robot_pose_ekf', PoseWithCovarianceStamped, self._ekfCallback)
+        self.start_pose = None
+        self.cur_pose = None
+        #rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
         # subscribe to bump sensor
         self.bump = False
+        self.bump_count = 0
         rospy.Subscriber('mobile_base/events/bumper', BumperEvent, self._bumperCallback)
 
         # subscribe to cliff sensor
@@ -39,10 +43,17 @@ class Sensors():
         rospy.Subscriber('mobile_base/events/wheel_drop', WheelDropEvent, self._wheelDropCallback)
 
     def _ekfCallback(self, data):
-        print data
+        if self.start_pose is None:
+            self.start_pose = data.pose.pose
+        
+        
+        self.cur_pose = data.pose.pose
+        q = self.cur_pose.orientation
+        print tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])
     
     def _bumperCallback(self, data):
         self.bump = (data.state == 1)
+        self.bump_count += int(self.bump)
         
         rospy.logwarn("Bumper event: " + str(data))
 
