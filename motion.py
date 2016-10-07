@@ -77,34 +77,38 @@ class Navigation(Motion):
 
         self.start_pose = None
         self.cur_pose = None
+        self.turn = None
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
     def returnHome(self):
         # compute angle to home
         desired_turn = atan2(self.start_pose[0][1] - self.cur_pose[0][1], self.start_pose[0][0] - self.cur_pose[0][0])
-        print desired_turn
-        print self.cur_pose[1]
 
-        if not np.isclose(self.cur_pose[1], desired_turn, rtol=0.1):
+        if np.isclose(self.cur_pose[0], self.start_pose[0], rtol=.01).all():
+            print "YAYAYAYAYAYAYAYAYA"
+            self.move_cmd.linear.x = 0
+            self.move_cmd.angular.z = 0
+
+        elif not np.isclose(self.cur_pose[1], desired_turn, rtol=0.1):
             if self.move_cmd.linear.x > 0:
-                print "slowing"
                 self.accelerate(-self._ACCEL_DELTA)
                 self.move_cmd.angular.z = 0
-                turn = None
+                self.turn = None
 
             else:
                 print "turning"
-                turn = TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
+                if self.turn is None:
+                    self.turn = TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
                 self.move_cmd.linear.x = 0
-                self.move_cmd.angular.z = turn * self._ROT_SPEED
+                self.move_cmd.angular.z = self.turn * self._ROT_SPEED
             self._publish()
-            return turn
 
         else:
             print "walking home"
             self.walk()
+            self.turn=None
 
-        return None
+        return self.turn
 
     def extractPose(self,p, q):
         """Given a quaternion q,extract an angle."""
