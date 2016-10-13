@@ -1,0 +1,11 @@
+<launch>
+    <!-- Set up mappings for the robot_pose_ekf package -->
+    <remap from="mobile_base/sensors/imu_data" to="imu_data" />
+    <remap from="mobile_base/odom" to="odom" />
+
+    <!-- Launch turtlebot -->
+    <include file="$(find turtlebot_bringup)/launch/minimal.launch" />
+    <include file="$(find turtlebot_bringup)/launch/3dsensor.launch" />
+    <include file="robot_pose_ekf.launch.xml" />
+    <!-- <include file="visual_odometry.launch.xml" /> -->
+</launch>

@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="viso2_ros" type="mono_odometer" name="mono_odometer">
+    <remap from="mono_odometer/image" to="/camera/rgb/image_raw"/>
+    <remap from="mono_odometer/odometry" to="/vo"/>
+  </node>
+</launch>
