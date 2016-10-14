@@ -3,9 +3,12 @@
     <remap from="mobile_base/sensors/imu_data" to="imu_data" />
     <remap from="mobile_base/odom" to="odom" />
 
-    <!-- Launch turtlebot -->
+    <!-- Launch Turtlebot -->
     <include file="$(find turtlebot_bringup)/launch/minimal.launch" />
     <include file="$(find turtlebot_bringup)/launch/3dsensor.launch" />
+
+    <!-- Set up odometry and localization helpers -->
+    <include file="ar_tags.launch.xml" />
     <include file="robot_pose_ekf.launch.xml" />
     <!-- <include file="visual_odometry.launch.xml" /> -->
 </launch>

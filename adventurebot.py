@@ -21,10 +21,11 @@ class Adventurebot():
         self.sensors = Sensors()
 
         turn = None
-
+        return_home = False
         while not rospy.is_shutdown():
 
             if (self.sensors.wheeldrop or self.sensors.cliff):
+                return_home = True
                 self.mover.stop(True)
 
             elif (self.sensors.bump):
@@ -36,7 +37,7 @@ class Adventurebot():
             elif (self.sensors.obstacle):
                 self.mover.avoidObstacle(self.sensors.rec_turn if turn is None else turn)
             
-            elif self.sensors.bump_count < 5:
+            elif not return_home:
                 self.mover.walk()
 
             else: 

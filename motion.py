@@ -5,11 +5,13 @@ import numpy as np
 from copy import deepcopy
 from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
 
-from math import radians, atan2
+from math import radians, atan2, pi
 from time import time
 
 TURN_LEFT = 1
 TURN_RIGHT = -1
+HALF_PI = pi / 2.0
+TWO_PI = 2 * pi
 
 class Motion():
     def __init__(self):
@@ -84,31 +86,50 @@ class Navigation(Motion):
         # compute angle to home
         desired_turn = atan2(self.start_pose[0][1] - self.cur_pose[0][1], self.start_pose[0][0] - self.cur_pose[0][0])
 
+        print "start pose: " + str(self.start_pose[0])
+        print "cur_pose: " + str(self.cur_pose[0])
+
+        cur_orientation = self.cur_pose[1]
+
+        # if both the vectors are in adjacent quadrants where the angles wrap around,
+        # we need to make sure that they treat each other like adjacent quadrants
+        if cur_orientation > HALF_PI and desired_turn < -HALF_PI:
+            desired_turn += TWO_PI
+        elif desired_turn > HALF_PI and cur_orientation < -HALF_PI:
+            cur_orientation += TWO_PI
+
         if np.isclose(self.cur_pose[0], self.start_pose[0], rtol=.01).all():
-            print "YAYAYAYAYAYAYAYAYA"
+            print "start pose: " + str(self.start_pose[0])
+            print "cur_pose: " + str(self.cur_pose[0])
             self.move_cmd.linear.x = 0
             self.move_cmd.angular.z = 0
 
-        elif not np.isclose(self.cur_pose[1], desired_turn, rtol=0.1):
+        elif not np.isclose(cur_orientation, desired_turn, rtol=0.1):
             if self.move_cmd.linear.x > 0:
                 self.accelerate(-self._ACCEL_DELTA)
                 self.move_cmd.angular.z = 0
                 self.turn = None
 
             else:
-                print "turning"
                 if self.turn is None:
-                    self.turn = TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
+                    self.turn = TURN_LEFT if cur_orientation < desired_turn else TURN_RIGHT
+                    #self.turn = TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
                 self.move_cmd.linear.x = 0
                 self.move_cmd.angular.z = self.turn * self._ROT_SPEED
             self._publish()
 
         else:
-            print "walking home"
             self.walk()
             self.turn=None
 
         return self.turn
+
+    def spin(self):
+        self.move_cmd.linear.x = 0
+        self.move_cmd.angular.z = self._ROT_SPEED / 2.0
+        if self.cur_pose is not None:
+            print self.cur_pose[1]
+        self._publish()
 
     def extractPose(self,p, q):
         """Given a quaternion q,extract an angle."""
