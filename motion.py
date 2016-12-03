@@ -2,16 +2,19 @@ import cv2
 import rospy
 import tf
 import numpy as np
+
 from copy import deepcopy
 from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
-
 from math import radians, atan2, pi
 from time import time
+
+import MD2
+from MDgraph import FlooPlan
 
 TURN_LEFT = 1
 TURN_RIGHT = -1
 HALF_PI = pi / 2.0
-TWO_PI = 2 * pi
+TWO_PI = 2.0 * pi
 
 class Motion():
     def __init__(self):
@@ -26,7 +29,6 @@ class Motion():
         self._ACCEL_TIME = 0.1
         self._ACCEL_DELTA = 0.025
         
-
         # set up publisher/subscriber
         self.move_publisher = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
 
@@ -76,11 +78,16 @@ class Motion():
 class Navigation(Motion):
     def __init__(self):
         Motion.__init__(self)
+        
+        self.floorPlan = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
 
         self.start_pose = None
         self.cur_pose = None
         self.turn = None
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
+
+    def navigateToWaypoint(self, location):
+        pass
 
     def returnHome(self):
         # compute angle to home
