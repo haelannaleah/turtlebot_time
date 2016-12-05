@@ -46,13 +46,55 @@ class Sensors():
         # subscribe to April Tag data
         self.april_tags = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
+        
+        # publish landmark data
+        self.april_publisher = rospy.Publisher('/vo', Odometry, queue_size = 10)
     
     def _aprilTagCallback(self, data):
         """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
-        self.april_tags = data.markers if data.markers else None
+        if data.markers:
+            self.april_tags = data.markers
+            self.landmarkPublisher()
+        else:
+            self.april_tags = None
     
-    def landmarkPublisher(self, data):
-        pass
+    def landmarkPublisher(self):
+        """Publish information about current position based on landmarks."""
+        
+        # get the closest April tag, in case we see more than one
+        # TODO: make sure we only recognize those in our map dictionary
+        nearby = min(self.april_tags, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
+        msg = Odometry()
+        msg.header.frame_id = 'AprilTags'
+        msg.pose.pose.position.x = nearby.pose.pose.position.x #+ self.landmarks[nearby.id][0]
+        msg.pose.pose.position.y = nearby.pose.pose.position.y #+ self.landmarks[nearby.id][1]
+        msg.pose.pose.position.y = 0
+        
+        # TODO: incorporate landmark map data
+        msg.pose.pose.orientation.x = 1
+        msg.pose.pose.orientation.y = 0
+        msg.pose.pose.orientation.z = 0
+        msg.pose.pose.orientation.w = 0
+        
+        # landmark position known with high confidence
+        msg.pose.covariance = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        
+        # TODO: perhaps this needs to live in navigation?                 
+        msg.twist.twist = self.move_cmd
+        msg.twist.covariance = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        
+        # publish message
+        self.april_publisher.publish(msg)
     
     def _bumperCallback(self, data):
         """Handle bump events."""
