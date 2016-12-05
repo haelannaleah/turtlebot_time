@@ -40,7 +40,7 @@ class Adventurebot():
                 self.mover.walk()
 
             else: 
-                turn = self.mover.returnHome()
+                self.mover.goToDestination((-24,8))
 
     def shutdown(self):
         rospy.loginfo("goodbye, world")
