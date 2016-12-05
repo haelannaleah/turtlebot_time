@@ -63,6 +63,7 @@ class Navigation(Motion):
             return True
 
         elif not np.isclose(cur_orientation, desired_turn, rtol=0.05):
+            print desired_turn
             self.turn(cur_orientation < desired_turn)
 
         else:
@@ -86,4 +87,3 @@ class Navigation(Motion):
             self.start_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
         
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.start_pose)
-        print self.cur_pose
