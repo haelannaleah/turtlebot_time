@@ -36,6 +36,8 @@ class Motion():
         self.move_publisher = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
 
     def accelerate(self, delta):
+        """Smooth out starts and stops."""
+        
         # initialize the acceleration time
         if self.accel_time is False:
             self.accel_time = time()

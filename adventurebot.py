@@ -32,10 +32,10 @@ class Adventurebot():
                 if self.mover.move_cmd.linear.x > 0:
                     self.mover.stop(True)
                 else:
-                    self.mover.avoidObstacle(self.sensors.rec_turn if turn is None else turn)
+                    self.mover.avoidObstacle(self.sensors.rec_turn)
 
             elif (self.sensors.obstacle):
-                self.mover.avoidObstacle(self.sensors.rec_turn if turn is None else turn)
+                self.mover.avoidObstacle(self.sensors.rec_turn)
             
             elif not return_home:
                 self.mover.walk()
