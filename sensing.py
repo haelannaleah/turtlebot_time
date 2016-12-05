@@ -81,7 +81,7 @@ class Sensors():
 
         # get slice to check distance on
         img_height, img_width = self.depth_img.shape
-        s_height, s_width = (img_height, img_width * _SAMPLE_WIDTH)
+        s_height, s_width = (img_height, img_width * self._SAMPLE_WIDTH)
         w_center = img_width // 2
 
         # apply blur to smooth out irregularities
