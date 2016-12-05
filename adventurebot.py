@@ -2,7 +2,7 @@ import cv2
 import rospy
 import numpy as np
 
-from motion import Motion, Navigation
+from navigation import Navigation
 from sensing import Sensors
 
 class Adventurebot():
