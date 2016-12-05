@@ -45,7 +45,7 @@ class Sensors():
         
         # subscribe to April Tag data
         self.april_tags = None
-        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, sensors.processTag, queue_size=1)
+        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
     
     def _aprilTagCallback(self, data):
         """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
