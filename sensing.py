@@ -21,7 +21,7 @@ class Sensors():
         # subscribe to depth data
         self.depth_img = None
         self.obstacle = False
-        self.rec_turn = 1
+        self.rec_turn = False # true if left, false if right
         rospy.Subscriber('/camera/depth/image', Image, self._depthCallback)
 
         # subscribe to odometry
@@ -95,7 +95,7 @@ class Sensors():
 
         if sample[min_index] < self._DIST_THRESH:
             if not self.obstacle and not self.bump:
-                self.rec_turn = TURN_RIGHT if min_index[1] < w_center else TURN_LEFT
+                self.rec_turn = min_index[1] > w_center
                 self.obstacle = True
         else:
             self.obstacle = False

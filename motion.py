@@ -11,23 +11,26 @@ from time import time
 import MD2
 from MDgraph import FlooPlan
 
-TURN_LEFT = 1
-TURN_RIGHT = -1
 HALF_PI = pi / 2.0
 TWO_PI = 2.0 * pi
 
 class Motion():
+    
+    # define class variables
+    _ROT_SPEED = radians(60)
+    _LIN_SPEED = 0.2
+    _ACCEL_TIME = 0.1
+    _ACCEL_DELTA = 0.025
+    _TURN_LEFT = 1
+    _TURN_RIGHT = -1
+    
     def __init__(self):
 
-        # initialize class variables
+        # initialize instance variables
         self.direction = 1
         self.move_cmd = Twist()
         self.accel_time = False
-        
-        self._ROT_SPEED = radians(60)
-        self._LIN_SPEED = 0.2
-        self._ACCEL_TIME = 0.1
-        self._ACCEL_DELTA = 0.025
+        self.turn_dir = None
         
         # set up publisher/subscriber
         self.move_publisher = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
@@ -38,40 +41,61 @@ class Motion():
             self.accel_time = time()
         
         # otherwise, if it's time to increment speed...
-        elif time() - self.accel_time > self._ACCEL_TIME:
+        elif time() - self.accel_time > _ACCEL_TIME:
             self.move_cmd.linear.x += delta
             self.accel_time = False
 
     def avoidObstacle(self, rec_turn):
-        
-        # if we're still moving, we need to gracefully come to a stop
-        if self.move_cmd.linear.x > 0:
-            self.accelerate(-self._ACCEL_DELTA)
-            self.move_cmd.angular.z = 0
+        turn(rec_turn)
 
-        # otherwise, turn away!
+    def linear_stop(self):
+        if self.move_cmd.linear.x > 0:
+            self.accelerate(-_ACCEL_DELTA)
+            return False
         else:
             self.move_cmd.linear.x = 0
-            self.move_cmd.angular.z = rec_turn * self._ROT_SPEED
-
-        self._publish()
+            return True
 
     def stop(self, now=False):        
-        if not now and self.move_cmd.linear.x > 0:
-            self.accelerate(-self._ACCEL_DELTA)
+        if not now:
+            self.linear_stop()
         else:
             self.move_cmd.linear.x = 0
+            
         self.move_cmd.angular.z = 0
+        self._publish()
+
+    def turn(self, direction):
+        """
+            Turn the Turtlebot in the desired direction.
+            
+            Args:
+                direction: A boolean representing the direction to turn 
+                    True is left, False is right.
+        """
+        # if we're still moving forward, stop
+        if not self.linear_stop():
+            self.move_cmd.angular.z = 0
+            self.turn_dir = None
+
+        else:
+            # set turn direction
+            if self.turn_dir is None:
+                self.turn_dir = _TURN_LEFT if direction else TURN_RIGHT
+
+            self.move_cmd.angular.z = self.turn_dir * _ROT_SPEED
+        
         self._publish()
 
     def walk(self):
-        if self.move_cmd.linear.x < self._LIN_SPEED:
-            self.accelerate(self._ACCEL_DELTA)
+        if self.move_cmd.linear.x < _LIN_SPEED:
+            self.accelerate(_ACCEL_DELTA)
         else:
-            self.move_cmd.linear.x = self._LIN_SPEED
+            self.move_cmd.linear.x = _LIN_SPEED
+            
         self.move_cmd.angular.z = 0
         self._publish()
-
+    
     def _publish(self):
         self.move_publisher.publish(self.move_cmd)
 
@@ -86,8 +110,38 @@ class Navigation(Motion):
         self.turn = None
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
-    def navigateToWaypoint(self, location):
-        pass
+    def navigateToWaypoint(self, point):
+        """
+            Move from current position to desired waypoint.
+            
+            Args:
+                point: A point transformed into the robot frame
+        """
+        desired_turn = atan2(point[0][1] - self.cur_pose[0][1], point[0][0] - self.cur_pose[0][0])
+        
+        cur_orientation = self.cur_pose[1]
+
+        # if both the vectors are in adjacent quadrants where the angles wrap around,
+        # we need to make sure that they treat each other like adjacent quadrants
+        if cur_orientation > HALF_PI and desired_turn < -HALF_PI:
+            desired_turn += TWO_PI
+        elif desired_turn > HALF_PI and cur_orientation < -HALF_PI:
+            cur_orientation += TWO_PI
+            
+        if np.isclose(self.cur_pose[0], point[0], rtol=.01).all():
+            print "start pose: " + str(point[0])
+            print "cur_pose: " + str(self.cur_pose[0])
+            self.move_cmd.linear.x = 0
+            self.move_cmd.angular.z = 0
+
+        elif not np.isclose(cur_orientation, desired_turn, rtol=0.1):
+            self.turn(cur_orientation < desired_turn)
+
+        else:
+            self.walk()
+            self.turn_dir = None
+
+        return self.turn
 
     def returnHome(self):
         # compute angle to home
@@ -113,16 +167,16 @@ class Navigation(Motion):
 
         elif not np.isclose(cur_orientation, desired_turn, rtol=0.1):
             if self.move_cmd.linear.x > 0:
-                self.accelerate(-self._ACCEL_DELTA)
+                self.accelerate(-_ACCEL_DELTA)
                 self.move_cmd.angular.z = 0
                 self.turn = None
 
             else:
                 if self.turn is None:
-                    self.turn = TURN_LEFT if cur_orientation < desired_turn else TURN_RIGHT
-                    #self.turn = TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
+                    self.turn = _TURN_LEFT if cur_orientation < desired_turn else TURN_RIGHT
+                    #self.turn = _TURN_LEFT if abs(self.cur_pose[1] - desired_turn) > abs(self.cur_pose[1] + desired_turn) else TURN_RIGHT
                 self.move_cmd.linear.x = 0
-                self.move_cmd.angular.z = self.turn * self._ROT_SPEED
+                self.move_cmd.angular.z = self.turn * _ROT_SPEED
             self._publish()
 
         else:
@@ -133,10 +187,10 @@ class Navigation(Motion):
 
     def spin(self):
         self.move_cmd.linear.x = 0
-        self.move_cmd.angular.z = self._ROT_SPEED / 2.0
+        self.move_cmd.angular.z = _ROT_SPEED / 2.0
         if self.cur_pose is not None:
             print self.cur_pose[1]
-        self._publish()
+        _publish()
 
     def extractPose(self,p, q):
         """Given a quaternion q,extract an angle."""
