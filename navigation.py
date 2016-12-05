@@ -24,18 +24,29 @@ class Navigation(Motion):
 
         self.start_pose = None
         self.cur_pose = None
+        
+        self.path = None
+        self.destination = None
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
     def avoidObstacle(self, rec_turn):
         """Given a reccomended turn, avoid obstacle."""
         self.turn(rec_turn)
 
+    
+
+    def goToPoint(self, dest)
+        # if we aren't already following a path, 
+        if self.destination != dest:
+            self.path = self.graph
+        
+
     def navigateToWaypoint(self, point):
         """
             Move from current position to desired waypoint.
             
             Args:
-                point: A point transformed into the robot frame
+                point: An (x,y) float tuple representing a point relative to the origin.
         """
         desired_turn = atan2(point[0][1] - self.cur_pose[0][1], point[0][0] - self.cur_pose[0][0])
         cur_orientation = self.cur_pose[1]
@@ -66,12 +77,15 @@ class Navigation(Motion):
 
     def returnHome(self):
         """Return to home base. Used for debugging purposes."""
-        self.navigateToWaypoint(self.start_pose)
+        self.navigateToWaypoint((0,0))
 
+    def extractPose(self, p, q, origin=(0,0))
+        return ((p.x - origin[0], p.y - origin[1]), 
+            tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
+        
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        p, q = (data.pose.pose.position, data.pose.pose.orientation)
-        self.cur_pose = ((p.x,p.y), tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
-        
         if self.start_pose is None:
-            self.start_pose = deepcopy(self.cur_pose)
+            self.start_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+        
+        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.start_pose[0])
