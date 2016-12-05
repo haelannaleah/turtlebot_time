@@ -46,7 +46,7 @@ class Motion():
             self.accel_time = False
 
     def avoidObstacle(self, rec_turn):
-        turn(rec_turn)
+        self.turn(rec_turn)
 
     def linear_stop(self):
         if self.move_cmd.linear.x > 0:
@@ -141,7 +141,7 @@ class Navigation(Motion):
             self.walk()
             self.turn_dir = None
 
-        return self.turn
+        return self.turn_dir
 
     def returnHome(self):
         # compute angle to home
