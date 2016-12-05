@@ -79,7 +79,7 @@ class Navigation(Motion):
         """Return to home base. Used for debugging purposes."""
         self.navigateToWaypoint((0,0))
 
-    def extractPose(self, p, q, origin=(0,0))
+    def extractPose(self, p, q, origin=(0,0)):
         return ((p.x - origin[0], p.y - origin[1]), 
             tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
         
