@@ -9,7 +9,6 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 from kobuki_msgs.msg import BumperEvent, CliffEvent, WheelDropEvent
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
-from time import time
 
 class Sensors():
     

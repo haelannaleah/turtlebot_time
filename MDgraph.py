@@ -42,23 +42,26 @@ class FloorPlan():
         """Return the closest waypoint to the given position."""
         return min(self.graph, key = lambda k: self.dist2(point, self.graph[k].location))
     
-    def reset(self):
-        for key in self.graph:
-            self.graph[key].visited = True
-    
     def get_path(self, cur_pos, destination):
         """
             Compute the shortest path from the current position to the 
                 destination (Djikstra's Algorithm).
-        
-        
+                
+            Args:
+                cur_pos: An (x,y) float tuple representing the current position relative
+                    to the origin.
+                destination: An (x,y) float tuple representing the desired position relative
+                    to the origin.
+            
+            Returns:
+                A path of tuples representing the desired path to the destination waypoint.
         """
         
         # get our start and end positions
         start = self.get_closest(cur_pos)
         dest = self.get_closest(destination)
         
-        # create vertex set, distance list, and path
+        # create vertex set, distance list, and prev path
         Q = copy.deepcopy(self.graph)
         prev = {}
         dist = {}
@@ -87,12 +90,15 @@ class FloorPlan():
         crawler = dest
         path = []
         while True:
-            path.insert(0,crawler)
-            if prev[crawler] is not None:
-                crawler = prev[crawler]
-            else:
-                # we've reached the start of our search
+            # add the current point to the path at the begining
+            path.insert(0,self.graph[crawler])
+            
+            # we've reached our start position
+            if prev[crawler] is None:
                 return path
+            
+            # keep moving back through the path
+            crawler = prev[crawler]
         
 if __name__ == "__main__":
     import MD2
