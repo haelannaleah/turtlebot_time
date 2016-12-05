@@ -33,10 +33,24 @@ class Navigation(Motion):
         """Given a reccomended turn, avoid obstacle."""
         self.turn(rec_turn)
 
-    def goToPoint(self, dest):
-        # if we aren't already following a path, 
-        if self.destination != dest:
-            self.path = None #TODO
+    def goToDestination(self, dest):
+        """Travel to a location via waypoints."""
+        
+        # if we aren't already following a path, get a path
+        if self.path is None:
+            self.path = self.floorPlan.get_path(self.cur_pose[0], dest)
+        
+        # navigate to the current waypoint on the path
+        if self.navigateToWaypoint(self.path[0]):
+            # if we make it there, remove the current waypoint
+            self.path.pop(0)
+        
+        # if the path is empty, we've reached our destination 
+        if not self.path:
+            self.path = None
+            return True
+        
+        return False
 
     def navigateToWaypoint(self, point):
         """
@@ -78,6 +92,7 @@ class Navigation(Motion):
         self.navigateToWaypoint((0,0))
 
     def extractPose(self, p, q, origin=((0,0),0)):
+        """Extract current pose relative to the origin."""
         return ((p.x - origin[0][0], p.y - origin[0][1]), 
             tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1] - origin[1])
         
