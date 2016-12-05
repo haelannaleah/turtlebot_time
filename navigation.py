@@ -33,13 +33,10 @@ class Navigation(Motion):
         """Given a reccomended turn, avoid obstacle."""
         self.turn(rec_turn)
 
-    
-
     def goToPoint(self, dest):
         # if we aren't already following a path, 
         if self.destination != dest:
             self.path = None #TODO
-        
 
     def navigateToWaypoint(self, point):
         """
@@ -48,7 +45,7 @@ class Navigation(Motion):
             Args:
                 point: An (x,y) float tuple representing a point relative to the origin.
         """
-        desired_turn = atan2(point[0][1] - self.cur_pose[0][1], point[0][0] - self.cur_pose[0][0])
+        desired_turn = atan2(point[1] - self.cur_pose[0][1], point[0] - self.cur_pose[0][0])
         cur_orientation = self.cur_pose[1]
 
         # if both the vectors are in adjacent quadrants where the angles wrap around,
@@ -58,7 +55,7 @@ class Navigation(Motion):
         elif desired_turn > self._HALF_PI and cur_orientation < -self._HALF_PI:
             cur_orientation += self._TWO_PI
             
-        if np.isclose(self.cur_pose[0], point[0], rtol=.01).all():
+        if np.isclose(self.cur_pose[0], point, rtol=.01).all():
             print "start pose: " + str(point[0])
             print "cur_pose: " + str(self.cur_pose[0])
             
