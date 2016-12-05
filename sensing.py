@@ -77,9 +77,9 @@ class Sensors():
         
         # TODO: incorporate landmark map data
         # TODO: This data should be relative to the start pos so that its close enough efk believes it
-        msg.pose.pose.orientation.x = 1
+        msg.pose.pose.orientation.x = 0
         msg.pose.pose.orientation.y = 0
-        msg.pose.pose.orientation.z = 0
+        msg.pose.pose.orientation.z = 1
         msg.pose.pose.orientation.w = 0
         
         # landmark position known with high confidence
