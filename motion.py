@@ -109,7 +109,6 @@ class Navigation(Motion):
 
         self.start_pose = None
         self.cur_pose = None
-        self.turn = None
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
     def navigateToWaypoint(self, point):
