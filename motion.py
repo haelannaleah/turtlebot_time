@@ -41,7 +41,7 @@ class Motion():
             self.accel_time = time()
         
         # otherwise, if it's time to increment speed...
-        elif time() - self.accel_time > _ACCEL_TIME:
+        elif time() - self.accel_time > self._ACCEL_TIME:
             self.move_cmd.linear.x += delta
             self.accel_time = False
 
@@ -50,7 +50,7 @@ class Motion():
 
     def linear_stop(self):
         if self.move_cmd.linear.x > 0:
-            self.accelerate(-_ACCEL_DELTA)
+            self.accelerate(-self._ACCEL_DELTA)
             return False
         else:
             self.move_cmd.linear.x = 0
@@ -81,17 +81,17 @@ class Motion():
         else:
             # set turn direction
             if self.turn_dir is None:
-                self.turn_dir = _TURN_LEFT if direction else TURN_RIGHT
+                self.turn_dir = self._TURN_LEFT if direction else self._TURN_RIGHT
 
-            self.move_cmd.angular.z = self.turn_dir * _ROT_SPEED
+            self.move_cmd.angular.z = self.turn_dir * self._ROT_SPEED
         
         self._publish()
 
     def walk(self):
-        if self.move_cmd.linear.x < _LIN_SPEED:
-            self.accelerate(_ACCEL_DELTA)
+        if self.move_cmd.linear.x < self._LIN_SPEED:
+            self.accelerate(self._ACCEL_DELTA)
         else:
-            self.move_cmd.linear.x = _LIN_SPEED
+            self.move_cmd.linear.x = self._LIN_SPEED
             
         self.move_cmd.angular.z = 0
         self._publish()

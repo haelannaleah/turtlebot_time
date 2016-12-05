@@ -99,7 +99,7 @@ class Sensors():
         min_index = np.unravel_index(min_index, sample.shape)
 
         # if the closest thing in our slice is too close, likely an obstacle
-        if sample[min_index] < _DIST_THRESH:
+        if sample[min_index] < self._DIST_THRESH:
             if not self.obstacle and not self.bump:
                 self.rec_turn = min_index[1] > w_center
                 self.obstacle = True
