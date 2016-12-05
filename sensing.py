@@ -62,11 +62,14 @@ class Sensors():
     
     def landmarkPublisher(self):
         """Publish information about current position based on landmarks."""
+        # TODO: create real information; however, otherwise, on a good track
         
         # get the closest April tag, in case we see more than one
         # TODO: make sure we only recognize those in our map dictionary
         nearby = min(self.april_tags, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         msg = Odometry()
+        
+        # TODO: fix error: filter time older than vo message buffer
         msg.header.stamp = rospy.Time.now()
         msg.header.frame_id = 'AprilTags'
         msg.pose.pose.position.x = nearby.pose.pose.position.x #+ self.landmarks[nearby.id][0]
@@ -74,12 +77,14 @@ class Sensors():
         msg.pose.pose.position.y = 0
         
         # TODO: incorporate landmark map data
+        # TODO: This data should be relative to the start pos so that its close enough efk believes it
         msg.pose.pose.orientation.x = 1
         msg.pose.pose.orientation.y = 0
         msg.pose.pose.orientation.z = 0
         msg.pose.pose.orientation.w = 0
         
         # landmark position known with high confidence
+        # TODO determine correct cov
         msg.pose.covariance = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
