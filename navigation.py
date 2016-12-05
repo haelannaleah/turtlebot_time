@@ -35,10 +35,10 @@ class Navigation(Motion):
 
     
 
-    def goToPoint(self, dest)
+    def goToPoint(self, dest):
         # if we aren't already following a path, 
         if self.destination != dest:
-            self.path = self.graph
+            self.path = None #TODO
         
 
     def navigateToWaypoint(self, point):
