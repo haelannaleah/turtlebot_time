@@ -7,6 +7,7 @@ from ar_track_alvar_msgs.msg import AlvarMarkers
 from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from kobuki_msgs.msg import BumperEvent, CliffEvent, WheelDropEvent
+from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 
 class Sensors():
@@ -49,6 +50,9 @@ class Sensors():
     def _aprilTagCallback(self, data):
         """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
         self.april_tags = data.markers if data.markers else None
+    
+    def landmarkPublisher(self, data):
+        pass
     
     def _bumperCallback(self, data):
         """Handle bump events."""

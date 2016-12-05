@@ -65,6 +65,7 @@ class Navigation(Motion):
         return False
 
     def returnHome(self):
+        """Return to home base. Used for debugging purposes."""
         self.navigateToWaypoint(self.start_pose)
 
     def _ekfCallback(self, data):
