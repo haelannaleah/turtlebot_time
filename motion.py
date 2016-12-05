@@ -9,7 +9,7 @@ from math import radians, atan2, pi
 from time import time
 
 import MD2
-from MDgraph import FlooPlan
+from MDgraph import FloorPlan
 
 HALF_PI = pi / 2.0
 TWO_PI = 2.0 * pi
