@@ -67,7 +67,7 @@ class Sensors():
         # TODO: make sure we only recognize those in our map dictionary
         nearby = min(self.april_tags, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         msg = Odometry()
-        msg.header.stamp = time()
+        msg.header.stamp = rospy.Time.now()
         msg.header.frame_id = 'AprilTags'
         msg.pose.pose.position.x = nearby.pose.pose.position.x #+ self.landmarks[nearby.id][0]
         msg.pose.pose.position.y = nearby.pose.pose.position.y #+ self.landmarks[nearby.id][1]
