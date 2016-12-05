@@ -9,6 +9,7 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 from kobuki_msgs.msg import BumperEvent, CliffEvent, WheelDropEvent
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
+from time import time
 
 class Sensors():
     
@@ -54,6 +55,7 @@ class Sensors():
         """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
         if data.markers:
             self.april_tags = data.markers
+            print self.april_tags
             self.landmarkPublisher()
         else:
             self.april_tags = None
@@ -65,6 +67,7 @@ class Sensors():
         # TODO: make sure we only recognize those in our map dictionary
         nearby = min(self.april_tags, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         msg = Odometry()
+        msg.header.stamp = time()
         msg.header.frame_id = 'AprilTags'
         msg.pose.pose.position.x = nearby.pose.pose.position.x #+ self.landmarks[nearby.id][0]
         msg.pose.pose.position.y = nearby.pose.pose.position.y #+ self.landmarks[nearby.id][1]
