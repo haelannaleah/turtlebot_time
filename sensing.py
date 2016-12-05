@@ -85,7 +85,7 @@ class Sensors():
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         # TODO: perhaps this needs to live in navigation?                 
-        msg.twist.twist = self.move_cmd
+        #msg.twist.twist = self.move_cmd
         msg.twist.covariance = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
