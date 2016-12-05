@@ -11,7 +11,6 @@ class Adventurebot():
         
         # set up ctrl-C shutdown behavior
         rospy.on_shutdown(self.shutdown)
-
         rospy.loginfo("hello world")
 
         # set global refresh rate

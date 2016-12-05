@@ -16,6 +16,8 @@ class Navigation(Motion):
     _TWO_PI = 2.0 * pi
     
     def __init__(self):
+        
+        # set up all the 
         Motion.__init__(self)
         
         self.floorPlan = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
@@ -25,6 +27,7 @@ class Navigation(Motion):
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
     def avoidObstacle(self, rec_turn):
+        """Given a reccomended turn, avoid obstacle."""
         self.turn(rec_turn)
 
     def navigateToWaypoint(self, point):
@@ -51,7 +54,7 @@ class Navigation(Motion):
             # we've more or less reached our waypoint!
             return True
 
-        elif not np.isclose(cur_orientation, desired_turn, rtol=0.1):
+        elif not np.isclose(cur_orientation, desired_turn, rtol=0.05):
             self.turn(cur_orientation < desired_turn)
 
         else:
@@ -64,12 +67,10 @@ class Navigation(Motion):
     def returnHome(self):
         self.navigateToWaypoint(self.start_pose)
 
-    def extractPose(self,p, q):
-        """Given a quaternion q,extract an angle."""
-        return ((p.x,p.y), tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
-
     def _ekfCallback(self, data):
-        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+        """Extract current position and orientation data."""
+        p, q = (data.pose.pose.position, data.pose.pose.orientation)
+        self.cur_pose = ((p.x,p.y), tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
         
         if self.start_pose is None:
             self.start_pose = deepcopy(self.cur_pose)

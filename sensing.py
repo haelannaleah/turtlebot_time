@@ -1,12 +1,13 @@
-import rospy
 import cv2
 import numpy as np
+import rospy
 import tf
 
-from cv_bridge import CvBridge, CvBridgeError
+from ar_track_alvar_msgs.msg import AlvarMarkers
+from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from kobuki_msgs.msg import BumperEvent, CliffEvent, WheelDropEvent
-from sensor_msgs.msg import PointCloud2, LaserScan, Image
+from sensor_msgs.msg import Image
 
 class Sensors():
     
@@ -40,15 +41,14 @@ class Sensors():
         # subscribe to wheel drop sensor
         self.wheeldrop = False
         rospy.Subscriber('mobile_base/events/wheel_drop', WheelDropEvent, self._wheelDropCallback)
-
-    def _ekfCallback(self, data):
-        """Process extended kalman filter data."""
-        if self.start_pose is None:
-            self.start_pose = data.pose.pose
         
-        self.cur_pose = data.pose.pose
-        q = self.cur_pose.orientation
-        print tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])
+        # subscribe to April Tag data
+        self.april_tags = None
+        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, sensors.processTag, queue_size=1)
+    
+    def _aprilTagCallback(self, data):
+        """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
+        self.april_tags = data.markers if data.markers else None
     
     def _bumperCallback(self, data):
         """Handle bump events."""
@@ -66,12 +66,6 @@ class Sensors():
             self.cliff = True
         
         rospy.logwarn("Cliff event: " + str(data.CLIFF))
-
-    def _wheelDropCallback(self, data):
-        """Handle wheel drops."""
-        self.wheeldrop = (data.state == WheelDropEvent.DROPPED)
-
-        rospy.logwarn("Wheel drop event: " + str(data.wheel))
 
     def _depthCallback(self, data):
         """Process depth data. Detect obstacles."""
@@ -106,3 +100,16 @@ class Sensors():
         else:
             self.obstacle = False
         
+    def _ekfCallback(self, data):
+        """Extract current position and orientation data."""
+        p, q = (data.pose.pose.position, data.pose.pose.orientation)
+        self.cur_pose = ((p.x,p.y), tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1])
+        
+        if self.start_pose is None:
+            self.start_pose = deepcopy(self.cur_pose)
+            
+    def _wheelDropCallback(self, data):
+        """Handle wheel drops."""
+        self.wheeldrop = (data.state == WheelDropEvent.DROPPED)
+
+        rospy.logwarn("Wheel drop event: " + str(data.wheel))
