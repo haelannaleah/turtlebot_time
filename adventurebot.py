@@ -36,10 +36,7 @@ class Adventurebot():
             elif (self.sensors.obstacle):
                 self.mover.avoidObstacle(self.sensors.rec_turn)
             
-            elif not return_home:
-                self.mover.walk()
-
-            else: 
+            else:
                 self.mover.goToDestination((-24,8))
 
     def shutdown(self):
