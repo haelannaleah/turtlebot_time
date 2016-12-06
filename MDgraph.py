@@ -91,7 +91,7 @@ class FloorPlan():
         path = []
         while True:
             # add the current point to the path at the begining
-            path.insert(0,self.graph[crawler])
+            path.insert(0,self.graph[crawler].location)
             
             # we've reached our start position
             if prev[crawler] is None:
