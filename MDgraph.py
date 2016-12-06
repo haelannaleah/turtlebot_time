@@ -1,7 +1,7 @@
 import copy
 
 class Waypoint():
-    def __init__(self, location, neighbors):
+    def __init__(self, location, neighbors, to_meters):
         """
             Initialize a waypoint object.
             
@@ -11,7 +11,7 @@ class Waypoint():
                 neighbors: An character list specifying the waypoint's neighbors in 
                     the graph as their ids.
         """
-        self.location = location
+        self.location = location if not to_meters else tuple(p * .3048 for p in location)
         self.neighbors = set(neighbors)
         self.visited = False
 
@@ -31,7 +31,7 @@ class FloorPlan():
         self.landmarks = set(landmarks)
         self.graph = {}
         for point_id in point_ids:
-            self.graph[point_id] = Waypoint(locations[point_id], neighbors[point_id])
+            self.graph[point_id] = Waypoint(locations[point_id], neighbors[point_id], True)
         
     
     def dist2(self, point1, point2):
