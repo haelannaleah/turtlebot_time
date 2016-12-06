@@ -38,7 +38,7 @@ class Navigation(Motion):
         """Travel to a destination via waypoints."""
         
         # if we aren't already following a path, get a path
-        if self.path is None:
+        if self.path is None and self.cur_pose is not None:
             self.path = self.floorPlan.get_path(self.cur_pose[0], dest)
         
         # navigate to the current waypoint on the path
