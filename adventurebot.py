@@ -37,7 +37,7 @@ class Adventurebot():
                 self.mover.avoidObstacle(self.sensors.rec_turn)
             
             elif not return_home:
-                return_home = self.mover.goToDestination((-7.3152,1.2192)):
+                return_home = self.mover.goToDestination((-7.3152,1.2192))
                 
             else:
                 self.mover.goToDestination((0,0))
