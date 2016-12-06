@@ -39,17 +39,17 @@ class Navigation(Motion):
         
         if self.cur_pose is None:
             return False
-            
-        print self.cur_pose
         
         # if we aren't already following a path, get a path
         if self.path is None:
             self.path = self.floorPlan.get_path(self.cur_pose[0], dest)
+            print self.path
         
         # navigate to the current waypoint on the path
         if self.navigateToWaypoint(self.path[0]):
             # if we make it there, remove the current waypoint
             self.path.pop(0)
+            print self.cur_pose
         
         # if the path is empty, we've reached our destination 
         if not self.path:
