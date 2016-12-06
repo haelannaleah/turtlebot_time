@@ -48,8 +48,8 @@ class Navigation(Motion):
         # navigate to the current waypoint on the path
         if self.navigateToWaypoint(self.path[0]):
             # if we make it there, remove the current waypoint
-            self.path.pop(0)
-            print self.cur_pose
+            print(self.path.pop(0))
+            print(self.cur_pose)
         
         # if the path is empty, we've reached our destination 
         if not self.path:
@@ -79,7 +79,7 @@ class Navigation(Motion):
         elif desired_turn > self._HALF_PI and cur_orientation < -self._HALF_PI:
             cur_orientation += self._TWO_PI
             
-        if np.isclose(self.cur_pose[0], point, rtol=.1).all():
+        if np.isclose(self.cur_pose[0], point, rtol=.25).all():
             rospy.loginfo("start pose: " + str(point[0]))
             rospy.loginfo("cur_pose: " + str(self.cur_pose[0]))
             
