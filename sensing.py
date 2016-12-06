@@ -54,7 +54,6 @@ class Sensors():
         """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
         if data.markers:
             self.april_tags = data.markers
-            print self.april_tags
             self.landmarkPublisher()
         else:
             self.april_tags = None
@@ -71,8 +70,8 @@ class Sensors():
         # TODO: fix error: filter time older than vo message buffer
         msg.header.stamp = rospy.Time.now()
         msg.header.frame_id = 'AprilTags'
-        msg.pose.pose.position.x = nearby.pose.pose.position.x #+ self.landmarks[nearby.id][0]
-        msg.pose.pose.position.y = nearby.pose.pose.position.y #+ self.landmarks[nearby.id][1]
+        msg.pose.pose.position.x = nearby.pose.pose.position.x #+ self.landmarks[nearby.id][0] + self.start_pose[0][0]
+        msg.pose.pose.position.y = nearby.pose.pose.position.y #+ self.landmarks[nearby.id][1] + self.start_pose[0][1]
         msg.pose.pose.position.y = 0
         
         # TODO: incorporate landmark map data

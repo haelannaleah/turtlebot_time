@@ -17,9 +17,10 @@ class Navigation(Motion):
     
     def __init__(self):
         
-        # set up all the 
+        # set up all the inherited variables from the motion class
         Motion.__init__(self)
         
+        # TODO: consider factoring out to make more general?
         self.floorPlan = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
 
         self.start_pose = None
@@ -34,7 +35,7 @@ class Navigation(Motion):
         self.turn(rec_turn)
 
     def goToDestination(self, dest):
-        """Travel to a location via waypoints."""
+        """Travel to a destination via waypoints."""
         
         # if we aren't already following a path, get a path
         if self.path is None:
@@ -50,6 +51,7 @@ class Navigation(Motion):
             self.path = None
             return True
         
+        # still getting there
         return False
 
     def navigateToWaypoint(self, point):
@@ -58,6 +60,9 @@ class Navigation(Motion):
             
             Args:
                 point: An (x,y) float tuple representing a point relative to the origin.
+            
+            Returns:
+                True if we are close to the desired location, False otherwise.
         """
         desired_turn = atan2(point[1] - self.cur_pose[0][1], point[0] - self.cur_pose[0][0])
         cur_orientation = self.cur_pose[1]
@@ -70,14 +75,13 @@ class Navigation(Motion):
             cur_orientation += self._TWO_PI
             
         if np.isclose(self.cur_pose[0], point, rtol=.01).all():
-            print "start pose: " + str(point[0])
-            print "cur_pose: " + str(self.cur_pose[0])
+            rospy.loginfo("start pose: " + str(point[0]))
+            rospy.loginfo("cur_pose: " + str(self.cur_pose[0]))
             
             # we've more or less reached our waypoint!
             return True
 
         elif not np.isclose(cur_orientation, desired_turn, rtol=0.05):
-            print desired_turn
             self.turn(cur_orientation < desired_turn)
 
         else:
