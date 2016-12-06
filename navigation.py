@@ -39,6 +39,8 @@ class Navigation(Motion):
         
         if self.cur_pose is None:
             return False
+            
+        print self.cur_pose
         
         # if we aren't already following a path, get a path
         if self.path is None:
