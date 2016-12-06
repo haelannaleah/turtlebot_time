@@ -1,3 +1,10 @@
+"""
+every waypoint can represent a recentering oportunity
+    if the hallway is wide enough, recenter, else don't
+    
+how does incrementally adding known things translate to MD setting
+"""
+
 import numpy as np
 import rospy
 import tf

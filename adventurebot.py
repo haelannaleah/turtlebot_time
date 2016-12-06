@@ -37,7 +37,7 @@ class Adventurebot():
                 self.mover.avoidObstacle(self.sensors.rec_turn)
             
             else:
-                self.mover.goToDestination((-24,8))
+                self.mover.goToDestination((-7.3152,2.4384))
 
     def shutdown(self):
         rospy.loginfo("goodbye, world")

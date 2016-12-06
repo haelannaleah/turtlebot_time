@@ -13,7 +13,6 @@ class Waypoint():
         """
         self.location = location if not to_meters else tuple(p * .3048 for p in location)
         self.neighbors = set(neighbors)
-        self.visited = False
 
 class FloorPlan():
     def __init__(self, point_ids, locations, neighbors, landmarks):
@@ -45,7 +44,7 @@ class FloorPlan():
     def get_path(self, cur_pos, destination):
         """
             Compute the shortest path from the current position to the 
-                destination (Djikstra's Algorithm).
+                destination (Djikstra's Algorithm). Note: only guaranteed to work for acyclic graphs.
                 
             Args:
                 cur_pos: An (x,y) float tuple representing the current position relative
