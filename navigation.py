@@ -79,14 +79,14 @@ class Navigation(Motion):
         elif desired_turn > self._HALF_PI and cur_orientation < -self._HALF_PI:
             cur_orientation += self._TWO_PI
             
-        if np.isclose(self.cur_pose[0], point, atol=.1).all():
+        if np.isclose(self.cur_pose[0], point, atol=.05).all():
             rospy.loginfo("start pose: " + str(point[0]))
             rospy.loginfo("cur_pose: " + str(self.cur_pose[0]))
             
             # we've more or less reached our waypoint!
             return True
 
-        elif not np.isclose(cur_orientation, desired_turn, rtol=0.05):
+        elif not np.isclose(cur_orientation, desired_turn, atol=0.01):
             self.turn(cur_orientation < desired_turn)
 
         else:
