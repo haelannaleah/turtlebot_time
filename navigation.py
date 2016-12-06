@@ -103,7 +103,7 @@ class Navigation(Motion):
     def extractPose(self, p, q, origin=((0,0),0)):
         """Extract current pose relative to the origin."""
         return ((p.x - origin[0][0], p.y - origin[0][1]), 
-            tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1] - origin[1])
+            tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1]) #- origin[1])
         
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
