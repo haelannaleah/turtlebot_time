@@ -93,7 +93,7 @@ class Navigation(Motion):
             # we've more or less reached our waypoint!
             return True
 
-        elif not np.isclose(cur_orientation, desired_turn, atol=0.01):
+        elif not np.isclose(cur_orientation, desired_turn, rtol=0.05):
             self.turn(cur_orientation < desired_turn)
 
         else:
