@@ -115,7 +115,10 @@ class Navigation(Motion):
             tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1] - origin[1])
     
     def setOrigin(self, april_tags):
-        if april_tags is None:
+        if self.cur_pose is None:
+            return False
+            
+        elif april_tags is None:
             self.turn(self.direction, .5)
             return False
         
