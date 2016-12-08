@@ -4,7 +4,6 @@ every waypoint can represent a recentering oportunity
     
 how does incrementally adding known things translate to MD setting
 """
-
 import numpy as np
 import rospy
 import tf
@@ -30,7 +29,7 @@ class Navigation(Motion):
         # TODO: consider factoring out to make more general?
         self.floorPlan = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
 
-        self.start_pose = None
+        self.origin_pose = None
         self.cur_pose = None
         
         self.path = None
@@ -111,10 +110,26 @@ class Navigation(Motion):
         """Extract current pose relative to the origin."""
         return ((p.x - origin[0][0], p.y - origin[0][1]), 
             tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1] - origin[1])
+    
+    def setOrigin(self, april_tags):
+        if april_tags is None:
+            self.turn(self.direction)
+            return False
         
+        # extract the origin tag
+        tag_data = next(tag.pose.pose for tag in april_tags if tag.id == 10)#self.origin_id)
+        tag_pose = self.extractPose(tag_data.position, tag_data.orientation) 
+        
+        # convert the origin tag to a offset for setting the origin
+        offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
+        x = self.cur_pose[0][0] - offset * cos(tag_pose[1])
+        y = self.cur_pose[0][1] - offset * sin(tag_pose[1])
+        angle = self.cur_pose[1] - tag_pose[1]
+        self.origin_pose =  
+    
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        if self.start_pose is None:
-            self.start_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+        if self.origin_pose is None:
+            self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
         
-        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.start_pose)
+        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
