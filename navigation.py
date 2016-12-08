@@ -106,8 +106,11 @@ class Navigation(Motion):
         """Return to home base. Used for debugging purposes."""
         self.navigateToWaypoint((0,0))
 
-    def extractPose(self, p, q, origin=((0,0),0)):
+    def extractPose(self, p, q, origin=None):
         """Extract current pose relative to the origin."""
+        if origin is None:
+            origin = ((0,0),0)
+            
         return ((p.x - origin[0][0], p.y - origin[0][1]), 
             tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1] - origin[1])
     
@@ -136,6 +139,6 @@ class Navigation(Motion):
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
         if self.origin_pose is None:
-            self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+        #    self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
         
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
