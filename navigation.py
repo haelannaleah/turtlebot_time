@@ -10,7 +10,7 @@ import tf
 
 from copy import deepcopy
 from geometry_msgs.msg import PoseWithCovarianceStamped
-from math import radians, atan2, pi
+from math import radians, atan2, cos, sin, pi
 
 import MD2
 from MDgraph import FloorPlan
