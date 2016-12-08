@@ -32,6 +32,9 @@ class Navigation(Motion):
         self.origin_pose = None
         self.cur_pose = None
         
+        self.live_pose = None
+        self.last_pose = None
+        
         self.path = None
         self.destination = None
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
@@ -143,6 +146,6 @@ class Navigation(Motion):
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        #if self.origin_pose is None:
-        #    self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+        if self.origin_pose is None:
+            self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)

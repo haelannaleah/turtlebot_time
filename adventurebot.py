@@ -40,10 +40,10 @@ class Adventurebot():
             elif (self.sensors.obstacle):
                 self.mover.avoidObstacle(self.sensors.rec_turn)
             
-            elif np.isclose(self.mover.cur_pose[1], 0, atol = .1):
-                print(self.mover.cur_pose)
-                print(self.mover.origin_pose)
-                self.shutdown()
+            # elif np.isclose(self.mover.cur_pose[1], 0, atol = .1):
+            #     print(self.mover.cur_pose)
+            #     print(self.mover.origin_pose)
+            #     self.shutdown()
             
             elif return_home:
                 self.mover.goToDestination((0,0))
