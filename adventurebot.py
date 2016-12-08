@@ -37,8 +37,8 @@ class Adventurebot():
                 # look for april tag
                 self.mover.setOrigin(self.sensors.april_tags)
 
-            elif (self.sensors.obstacle):
-                self.mover.avoidObstacle(self.sensors.rec_turn)
+            #elif (self.sensors.obstacle):
+            #    self.mover.avoidObstacle(self.sensors.rec_turn)
             
             # elif np.isclose(self.mover.cur_pose[1], 0, atol = .1):
             #     print(self.mover.cur_pose)
