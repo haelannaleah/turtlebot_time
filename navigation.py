@@ -92,7 +92,7 @@ class Navigation(Motion):
             # we've more or less reached our waypoint!
             return True
 
-        elif not np.isclose(cur_orientation, desired_turn, rtol=0.1):
+        elif not np.isclose(cur_orientation, desired_turn, atol=0.15):
             self.turn(cur_orientation < desired_turn)
 
         else:
@@ -116,7 +116,7 @@ class Navigation(Motion):
     
     def setOrigin(self, april_tags):
         if april_tags is None:
-            self.turn(self.direction, .25)
+            self.turn(self.direction, .5)
             return False
         
         # extract the origin tag
