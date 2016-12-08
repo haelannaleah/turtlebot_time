@@ -127,7 +127,7 @@ class Navigation(Motion):
         offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
         x = self.cur_pose[0][0] - offset * cos(tag_pose[1])
         y = self.cur_pose[0][1] - offset * sin(tag_pose[1])
-        angle = self.cur_pose[1] - tag_pose[1] + pi
+        angle = self.cur_pose[1] - tag_pose[1] - pi
         
         if angle > self._TWO_PI:
             angle -= self._TWO_PI
@@ -135,6 +135,8 @@ class Navigation(Motion):
             angle += self._TWO_PI
             
         self.origin_pose =  ((x,y),angle)
+        print self.cur_pose
+        print self.origin_pose
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""

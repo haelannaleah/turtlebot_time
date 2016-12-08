@@ -23,9 +23,6 @@ class Adventurebot():
         return_home = False
         while not rospy.is_shutdown():
 
-            rospy.loginfo(self.mover.cur_pose)
-            rospy.loginfo(self.mover.origin_pose)
-
             if (self.sensors.wheeldrop or self.sensors.cliff):
                 return_home = True
                 self.mover.stop(True)
