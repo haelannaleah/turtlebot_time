@@ -93,7 +93,7 @@ class Navigation(Motion):
             return True
 
         elif not np.isclose(cur_orientation, desired_turn, atol=0.15):
-            self.turn(cur_orientation < desired_turn)
+            self.turn(cur_orientation < desired_turn, .5)
 
         else:
             self.walk()
