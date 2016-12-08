@@ -116,7 +116,7 @@ class Navigation(Motion):
     
     def setOrigin(self, april_tags):
         if april_tags is None:
-            self.turn(self.direction)
+            self.turn(self.direction, .25)
             return False
         
         # extract the origin tag

@@ -61,7 +61,7 @@ class Motion():
         self.move_cmd.angular.z = 0
         self._publish()
 
-    def turn(self, direction):
+    def turn(self, direction, speed = 1):
         """
             Turn the Turtlebot in the desired direction.
             
@@ -79,7 +79,7 @@ class Motion():
             if self.turn_dir is None:
                 self.turn_dir = self._TURN_LEFT if direction else self._TURN_RIGHT
 
-            self.move_cmd.angular.z = self.turn_dir * self._ROT_SPEED
+            self.move_cmd.angular.z = self.turn_dir * self._ROT_SPEED * min(speed, 1)
         
         self._publish()
 
