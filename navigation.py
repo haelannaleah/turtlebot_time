@@ -125,8 +125,8 @@ class Navigation(Motion):
         
         # convert the origin tag to a offset for setting the origin
         offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
-        x = self.cur_pose[0][0] - offset * cos(tag_pose[1])
-        y = self.cur_pose[0][1] - offset * sin(tag_pose[1])
+        x = self.cur_pose[0][0] - tag_pose[0][0] #offset * cos(tag_pose[1])
+        y = self.cur_pose[0][1] - tag_pose[0][1] #offset * sin(tag_pose[1])
         angle = self.cur_pose[1] - tag_pose[1] - pi
         
         if angle > self._TWO_PI:
