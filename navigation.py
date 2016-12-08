@@ -140,5 +140,4 @@ class Navigation(Motion):
         """Extract current position and orientation data."""
         #if self.origin_pose is None:
         #    self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
-        
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)

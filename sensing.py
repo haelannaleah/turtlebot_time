@@ -100,7 +100,7 @@ class Sensors():
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         # publish message
-        self.april_publisher.publish(msg)
+        #self.april_publisher.publish(msg)
     
     def _bumperCallback(self, data):
         """Handle bump events."""
