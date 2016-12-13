@@ -46,7 +46,8 @@ class Adventurebot():
             #     self.shutdown()
             
             elif return_home:
-                self.mover.goToDestination((0,0))
+                if (self.mover.goToDestination((0,0))):
+                    print "WOOO HOME"
                 
             else:
                 #return_home = self.mover.navigateToWaypoint((0,1))
