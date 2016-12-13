@@ -50,7 +50,7 @@ class Adventurebot():
                 self.mover.goToDestination((0,0))
                 
             else:
-                return_home = self.mover.goToDestination((0,1))
+                return_home = self.mover.navigateToWaypoint((0,1))
                 #return_home = self.mover.goToDestination(-2.1336, 1.2192)
                 #return_home = self.mover.goToDestination((-7.3152,1.2192))
 
