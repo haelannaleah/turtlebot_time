@@ -21,7 +21,7 @@ class Navigation(Motion):
     
     _HALF_PI = pi / 2.0
     _TWO_PI = 2.0 * pi
-    _AVOID_TIME = .25
+    _AVOID_TIME = 2
     
     def __init__(self):
         
@@ -49,7 +49,6 @@ class Navigation(Motion):
         """Navigate around an obstacle (hopefully)"""
         self.avoiding = True
         if obstacle:
-            print "turning"
             self.turn(rec_turn)
             self.avoid_time = None
         elif self.avoid_time is None:
