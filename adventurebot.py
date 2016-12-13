@@ -47,6 +47,7 @@ class Adventurebot():
             
             elif return_home:
                 if (self.mover.goToDestination((0,0))):
+                    break
                     print "WOOO HOME"
                 
             else:
