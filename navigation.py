@@ -49,6 +49,7 @@ class Navigation(Motion):
         """Navigate around an obstacle (hopefully)"""
         self.avoiding = True
         if obstacle:
+            print "turning"
             self.turn(rec_turn)
             self.avoid_time = None
         elif self.avoid_time is None:
@@ -163,4 +164,5 @@ class Navigation(Motion):
         """Extract current position and orientation data."""
         if self.origin_pose is None:
             self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+            
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
