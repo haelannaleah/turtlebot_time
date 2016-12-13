@@ -22,7 +22,7 @@ class Navigation(Motion):
     _HALF_PI = pi / 2.0
     _TWO_PI = 2.0 * pi
     _AVOID_TIME = 2
-    _BASE_WIDTH = 0.1652
+    _BASE_WIDTH = 0.1778
     
     def __init__(self):
         
