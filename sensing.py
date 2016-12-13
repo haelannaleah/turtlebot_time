@@ -12,7 +12,7 @@ from sensor_msgs.msg import Image
 
 class Sensors():
     
-    _DIST_THRESH =  0.7
+    _DIST_THRESH =  0.6
     _SAMPLE_WIDTH = 0.3
     
     def __init__(self):
