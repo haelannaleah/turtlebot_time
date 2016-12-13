@@ -11,6 +11,7 @@ import tf
 from copy import deepcopy
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from math import radians, atan2, cos, sin, pi
+from time import time
 
 import MD2
 from MDgraph import FloorPlan
@@ -20,6 +21,7 @@ class Navigation(Motion):
     
     _HALF_PI = pi / 2.0
     _TWO_PI = 2.0 * pi
+    _AVOID_TIME = .25
     
     def __init__(self):
         
@@ -32,16 +34,29 @@ class Navigation(Motion):
         self.origin_pose = None
         self.cur_pose = None
         
-        self.live_pose = None
-        self.last_pose = None
-        
         self.path = None
         self.destination = None
+        self.avoiding = False
+        self.avoid_time = None
+        
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
     def avoidObstacle(self, rec_turn):
         """Given a reccomended turn, avoid obstacle."""
         self.turn(rec_turn)
+        
+    def intelligentAvoid(self, rec_turn, obstacle):
+        """Navigate around an obstacle (hopefully)"""
+        self.avoiding = True
+        if obstacle:
+            self.turn(rec_turn)
+            self.avoid_time = None
+        elif self.avoid_time is None:
+            self.avoid_time = time()
+        elif time() - self.avoid_time >= self._AVOID_TIME:
+            self.avoiding = False
+        else:
+            self.walk()
 
     def goToDestination(self, dest):
         """Travel to a destination via waypoints."""

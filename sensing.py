@@ -22,6 +22,7 @@ class Sensors():
         # subscribe to depth data
         self.depth_img = None
         self.obstacle = False
+        self.wall = 0   # TODO: -1 if there's a wall on the left, 1 if there's a wall on the right, 0 if no wall
         self.rec_turn = False # true if left, false if right
         rospy.Subscriber('/camera/depth/image', Image, self._depthCallback)
 
