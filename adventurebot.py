@@ -46,7 +46,6 @@ class Adventurebot():
             #     self.shutdown()
             
             elif return_home:
-                break
                 self.mover.goToDestination((0,0))
                 
             else:
