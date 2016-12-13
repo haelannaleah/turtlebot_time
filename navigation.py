@@ -22,6 +22,7 @@ class Navigation(Motion):
     _HALF_PI = pi / 2.0
     _TWO_PI = 2.0 * pi
     _AVOID_TIME = 2
+    _BASE_WIDTH = 0.1652
     
     def __init__(self):
         
@@ -161,7 +162,7 @@ class Navigation(Motion):
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
         if self.origin_pose is None:
-            self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation)
+            self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,-self._BASE_WIDTH),0))
             
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
         
