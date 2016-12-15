@@ -21,7 +21,7 @@ class Navigation(Motion):
     
     _HALF_PI = pi / 2.0
     _TWO_PI = 2.0 * pi
-    _AVOID_TIME = 2
+    _AVOID_TIME = 1.5
     _BASE_WIDTH = 0.1778
     
     def __init__(self):
@@ -52,32 +52,52 @@ class Navigation(Motion):
         if obstacle:
             self.turn(rec_turn)
             self.avoid_time = None
+            
         elif self.avoid_time is None:
             self.avoid_time = time()
+            
         elif time() - self.avoid_time >= self._AVOID_TIME:
+            self.setPath()
+            print("next point:" + str(self.path[0]))
             self.avoiding = False
+            
         else:
             self.walk()
 
+    def setPath():
+        """Compute path to current destination based on current position."""
+        
+        if self.destination is not None and self.cur_pose is not None:
+            self.path = self.floorPlan.get_path(self.cur_pose[0], self.destination)
+            return True
+        return False
+        
     def goToDestination(self, dest):
         """Travel to a destination via waypoints."""
         
         if self.cur_pose is None:
             return False
         
-        # if we aren't already following a path, get a path
-        if self.path is None:
-            self.path = self.floorPlan.get_path(self.cur_pose[0], dest)
+        # if we aren't going somewhere, set a destination
+        if self.destination is None:
+            self.destination = dest
+            
+            # try to plan a path there; if it works, we're golden
+            if not self.setPath():
+                self.destination = None
+                return False
         
         # navigate to the current waypoint on the path
         if self.navigateToWaypoint(self.path[0]):
             # if we make it there, remove the current waypoint
+            # printing for debugging purposes
             print("waypoint" + str(self.path.pop(0)))
             print("cur_pose" + str(self.cur_pose))
         
         # if the path is empty, we've reached our destination 
         if not self.path:
             self.path = None
+            self.destination = None
             return True
         
         # still getting there
