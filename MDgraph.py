@@ -60,6 +60,9 @@ class FloorPlan():
         start = self.get_closest(cur_pos)
         dest = self.get_closest(destination)
         
+        print(start)
+        print(dest)
+        
         # create vertex set, distance list, and prev path
         Q = copy.deepcopy(self.graph)
         prev = {}
@@ -102,5 +105,6 @@ class FloorPlan():
 if __name__ == "__main__":
     import MD2
     mygraph = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
-    print(mygraph.get_path((-66,8), (-48, 8)))
+    -2.088009210316669, 1.1881645720898277
+    print(mygraph.get_path((-2.088009210316669, 1.1881645720898277), (0, 0)))
     print(mygraph.get_closest((200,2)))
