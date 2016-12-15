@@ -59,6 +59,7 @@ class Navigation(Motion):
         elif time() - self.avoid_time >= self._AVOID_TIME:
             #self.setPath()
             print("next point:" + str(self.path[0]))
+            print("cur point:" + str(self.cur_pose))
             self.avoiding = False
             
         else:
