@@ -57,7 +57,7 @@ class Navigation(Motion):
             self.avoid_time = time()
             
         elif time() - self.avoid_time >= self._AVOID_TIME:
-            #self.setPath()
+            self.setPath()
             print("next point:" + str(self.path[0]))
             print("cur point:" + str(self.cur_pose))
             self.avoiding = False
@@ -143,7 +143,7 @@ class Navigation(Motion):
 
     def returnHome(self):
         """Return to home base. Used for debugging purposes."""
-        self.navigateToWaypoint((0,0))
+        self.goToDestination((0,0))
 
     def extractPose(self, p, q, origin=None):
         """Extract current pose relative to the origin."""
