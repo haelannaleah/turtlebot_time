@@ -64,7 +64,7 @@ class Navigation(Motion):
         else:
             self.walk()
 
-    def setPath():
+    def setPath(self):
         """Compute path to current destination based on current position."""
         
         if self.destination is not None and self.cur_pose is not None:
