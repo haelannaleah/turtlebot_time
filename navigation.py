@@ -87,6 +87,8 @@ class Navigation(Motion):
             if not self.setPath():
                 self.destination = None
                 return False
+                
+            print self.path
         
         # navigate to the current waypoint on the path
         if self.navigateToWaypoint(self.path[0]):
