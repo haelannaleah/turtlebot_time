@@ -73,6 +73,7 @@ class FloorPlan():
         
         dist[start] = 0
         while Q:
+            
             # get the closest waypoint off the queue
             cur_id = min(Q, key = lambda k: dist[k])
             cur_waypoint = Q.pop(cur_id)
@@ -91,6 +92,7 @@ class FloorPlan():
         # back out the actual path
         crawler = dest
         path = []
+        
         while True:
             # add the current point to the path at the begining
             path.insert(0,self.graph[crawler].location)
@@ -105,6 +107,7 @@ class FloorPlan():
 if __name__ == "__main__":
     import MD2
     mygraph = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
-    -2.088009210316669, 1.1881645720898277
-    print(mygraph.get_path((-2.088009210316669, 1.1881645720898277), (0, 0)))
+    print(mygraph.get_path((-2.088009210316669, 1.1881645720898277), (0, .6)))
+    print(mygraph.get_path((-10,-10), (0, .3)))
+    print(mygraph.get_path((-2.088009210316669, 1.1881645720898277),(-10,-10)))
     print(mygraph.get_closest((200,2)))
