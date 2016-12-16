@@ -40,11 +40,6 @@ class Adventurebot():
             elif (self.sensors.obstacle or self.mover.avoiding):
                 self.mover.intelligentAvoid(self.sensors.rec_turn, self.sensors.obstacle)
             
-            # elif np.isclose(self.mover.cur_pose[1], 0, atol = .1):
-            #     print(self.mover.cur_pose)
-            #     print(self.mover.origin_pose)
-            #     self.shutdown()
-            
             elif return_home:
                 if (self.mover.goToDestination((0,0))):
                     return_home = False

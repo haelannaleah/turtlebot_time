@@ -60,9 +60,6 @@ class FloorPlan():
         start = self.get_closest(cur_pos)
         dest = self.get_closest(destination)
         
-        print(start)
-        print(dest)
-        
         # create vertex set, distance list, and prev path
         Q = copy.deepcopy(self.graph)
         prev = {}
