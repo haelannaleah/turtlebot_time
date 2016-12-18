@@ -21,6 +21,7 @@ class Motion():
         self.move_cmd = Twist()
         self.accel_time = False
         self.turn_dir = None
+        self.walking = False
         
         # set up publisher/subscriber
         self.move_publisher = rospy.Publisher('cmd_vel_mux/input/navi', Twist, queue_size=10)
@@ -56,6 +57,7 @@ class Motion():
         if not now:
             self.linear_stop()
         else:
+            self.walking = False
             self.move_cmd.linear.x = 0
             
         self.move_cmd.angular.z = 0
@@ -85,6 +87,9 @@ class Motion():
 
     def walk(self):
         """Move straight forward."""
+        
+        self.walking = True
+        
         if self.move_cmd.linear.x < self._LIN_SPEED:
             self.accelerate(self._ACCEL_DELTA)
         else:

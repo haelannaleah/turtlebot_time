@@ -37,7 +37,7 @@ class Adventurebot():
                 # look for april tag
                 self.mover.setOrigin(self.sensors.april_tags)
 
-            elif (self.sensors.obstacle or self.mover.avoiding):
+            elif ((self.sensors.obstacle and self.mover.walking) or self.mover.avoiding):
                 self.mover.intelligentAvoid(self.sensors.rec_turn, self.sensors.obstacle)
             
             elif return_home:
