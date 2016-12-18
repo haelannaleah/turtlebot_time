@@ -50,6 +50,7 @@ class Motion():
             return False
         else:
             self.move_cmd.linear.x = 0
+            self.walking = False
             return True
 
     def stop(self, now=False): 
