@@ -5,6 +5,7 @@ import tf
 
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from cv_bridge import CvBridge
+from copy import deepcopy
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from kobuki_msgs.msg import BumperEvent, CliffEvent, WheelDropEvent
 from nav_msgs.msg import Odometry

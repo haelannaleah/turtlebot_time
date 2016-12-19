@@ -13,6 +13,7 @@ class Waypoint():
         """
         self.location = location if not to_meters else tuple(p * .3048 for p in location)
         self.neighbors = set(neighbors)
+        self.terminal = bool(self.neighbors.length <= 1)
 
 class FloorPlan():
     def __init__(self, point_ids, locations, neighbors, landmarks):
