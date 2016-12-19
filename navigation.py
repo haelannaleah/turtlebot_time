@@ -46,6 +46,11 @@ class Navigation(Motion):
         """Given a reccomended turn, avoid obstacle."""
         self.turn(rec_turn)
         
+    def center(self):
+        """Center robot in an open space, if possible."""
+        # TODO
+        pass
+        
     def intelligentAvoid(self, rec_turn, obstacle):
         """Navigate around an obstacle (hopefully)"""
         self.avoiding = True
@@ -57,7 +62,7 @@ class Navigation(Motion):
             self.avoid_time = time()
             
         elif time() - self.avoid_time >= self._AVOID_TIME:
-            self.setPath()
+            #self.setPath()
             print("next point:" + str(self.path[0]))
             print("cur point:" + str(self.cur_pose))
             self.avoiding = False
