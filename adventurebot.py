@@ -47,7 +47,7 @@ class Adventurebot():
                 
             else:
                 #return_home = self.mover.navigateToWaypoint((0,1))
-                if self.mover.goToDestination((-2.1336, 1.2192)):
+                if self.mover.goToDestination((-7.3152, 1.2192)):
                     return_home = True
                     print "REACHED DEST"
                 #return_home = self.mover.goToDestination((-7.3152,1.2192))
