@@ -154,11 +154,11 @@ class Navigation(Motion):
 
     def extractPose(self, p, q, origin=None):
         """Extract current pose relative to the origin."""
+        angle = tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1]
         if origin is None:
-            origin = ((0,0),0)
-            
-        return ((p.x - origin[0][0], p.y - origin[0][1]), 
-            tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1] - origin[1])
+            return ((p.x, p.y), angle)
+        else:
+            return ((p.x - origin[0][0], p.y - origin[0][1]), angle - origin[1])
     
     def setOrigin(self, april_tags):
         if self.cur_pose is None:
@@ -168,9 +168,21 @@ class Navigation(Motion):
             self.turn(self.direction, .5)
             return False
         
-        # extract the origin tag
+        # extract the origin tag; the april tag data comes back in a different format than odometry
         tag_data = next(tag.pose.pose for tag in april_tags if tag.id == 10)#self.origin_id)
+        
+        # set the y position to the forward displacement
+        tag_data.position.y = tag_data.position.z
+        
+        # set the x position so that the positive x axis is to the right
+        tag_data.position.x = -tag_data.position.x
+        
+        # use our usual method to extract
         tag_pose = self.extractPose(tag_data.position, tag_data.orientation) 
+        
+        if not np.isclose(tag_pose[1], 0, atol(.05)):
+            self.turn(self._TURN_LEFT if tag_pose[1] < 0 else self._TURN_RIGHT)
+            return False
         
         # convert the origin tag to a offset for setting the origin
         offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
