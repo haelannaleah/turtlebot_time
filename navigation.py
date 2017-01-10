@@ -182,6 +182,7 @@ class Navigation(Motion):
             print "turning"
             return False
         
+        # TODO: do this more robustly.
         # convert the origin tag to a offset for setting the origin
         offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
         x = self.cur_pose[0][0] + offset * sin(tag_pose[1])
@@ -195,14 +196,15 @@ class Navigation(Motion):
             
         self.origin_pose =  ((x,y),angle)
         print "CURRENT POSE AND ORIGIN POSE"
-        print self.cur_pose
         print self.origin_pose
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        # if self.origin_pose is None:
+        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
+        if self.origin_pose is not None:
+            print self.cur_pose
         #     #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
         #     self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
-            
-        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
+           
+        
         
