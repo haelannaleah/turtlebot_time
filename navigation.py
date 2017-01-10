@@ -174,9 +174,6 @@ class Navigation(Motion):
         # set the y position to the forward displacement
         tag_data.position.y = tag_data.position.z
         
-        # set the x position so that the positive x axis is to the right
-        tag_data.position.x = -tag_data.position.x
-        
         # use our usual method to extract
         tag_pose = self.extractPose(tag_data.position, tag_data.orientation) 
         
@@ -201,9 +198,9 @@ class Navigation(Motion):
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        if self.origin_pose is None:
-            #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
-            self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
+        # if self.origin_pose is None:
+        #     #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
+        #     self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
             
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
         
