@@ -183,6 +183,13 @@ class Navigation(Motion):
             return False
         
         # TODO: do this more robustly.
+        # TODO: we actually might need to switch x and y in general; might be worth reworking the map
+        # so that we don't have to.
+        # right now, we're getting an x and y offset from the robot for the april tags
+        # however, we want to superimpose these on an absolute coordinate system
+        # right now, this is perpendicular to the current system.
+        # we need to update the poses so that they aren't, possibly update the origin tag so that
+        # it's in a better location
         # convert the origin tag to a offset for setting the origin
         offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
         x = self.cur_pose[0][0] + offset * sin(tag_pose[1])
