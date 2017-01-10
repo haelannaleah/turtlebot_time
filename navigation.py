@@ -179,6 +179,7 @@ class Navigation(Motion):
         
         if not np.isclose(tag_pose[1], 0, atol=.05):
             self.turn(self._TURN_LEFT if tag_pose[1] < 0 else self._TURN_RIGHT)
+            print "turning"
             return False
         
         # convert the origin tag to a offset for setting the origin
@@ -193,6 +194,7 @@ class Navigation(Motion):
             angle += self._TWO_PI
             
         self.origin_pose =  ((x,y),angle)
+        print "CURRENT POSE AND ORIGIN POSE"
         print self.cur_pose
         print self.origin_pose
     
