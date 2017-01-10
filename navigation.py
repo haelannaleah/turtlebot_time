@@ -177,7 +177,7 @@ class Navigation(Motion):
         # use our usual method to extract
         tag_pose = self.extractPose(tag_data.position, tag_data.orientation) 
         
-        if not np.isclose(tag_pose[1], 0, atol(.05)):
+        if not np.isclose(tag_pose[1], 0, atol=.05):
             self.turn(self._TURN_LEFT if tag_pose[1] < 0 else self._TURN_RIGHT)
             return False
         
