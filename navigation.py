@@ -181,8 +181,8 @@ class Navigation(Motion):
         
         # set the x position to the forward displacement, and y to the horizontal displacement
         # consider transform listener
-        tag_data.position.x = tag_data.position.z
         tag_data.position.y = tag_data.position.x
+        tag_data.position.x = tag_data.position.z
         
         # use our usual method to extract
         tag_pose = self.extractPose(tag_data.position, tag_data.orientation) 
