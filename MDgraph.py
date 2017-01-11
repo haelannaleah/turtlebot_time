@@ -11,6 +11,7 @@ class Waypoint():
                 neighbors: An character list specifying the waypoint's neighbors in 
                     the graph as their ids.
         """
+        print "location: " + str(location)
         self.location = location if not to_meters else tuple(p * .3048 for p in location)
         self.neighbors = set(neighbors)
         self.terminal = bool(len(self.neighbors) <= 1)
