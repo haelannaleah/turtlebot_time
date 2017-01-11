@@ -126,7 +126,7 @@ class Sensors():
         if not self.cliff:
             self.cliff = True
         
-        self.logger.warn("Cliff event: " + str(data.CLIFF))
+        self._logger.warn("Cliff event: " + str(data.CLIFF))
 
     def _depthCallback(self, data):
         """Process depth data. Detect obstacles."""
@@ -146,7 +146,7 @@ class Sensors():
         try:
             min_index = np.nanargmin(sample[np.nonzero(sample)])
         except ValueError:
-            self._logger.err("Encountered all NaN slice in depth image.")
+            self._logger.error("Encountered all NaN slice in depth image.")
             self.obstacle = True
             return
 
