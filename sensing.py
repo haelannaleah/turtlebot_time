@@ -11,6 +11,8 @@ from kobuki_msgs.msg import BumperEvent, CliffEvent, WheelDropEvent
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 
+from logger import Logger
+
 class Sensors():
     
     _DIST_THRESH =  0.6
@@ -18,6 +20,7 @@ class Sensors():
     
     def __init__(self):
 
+        self._logger = Logger("Sensors")
         self.bridge = CvBridge()
 
         # subscribe to depth data
@@ -112,8 +115,8 @@ class Sensors():
         """Handle bump events."""
         self.bump = (data.state == 1)
         self.bump_count += int(self.bump)
-        
-        rospy.logwarn("Bumper event: " + str(data))
+
+        self._logger.warn("Bumper event: " + str(data))
 
     def _cliffCallback(self, data):
         """Handle cliffs."""
@@ -123,7 +126,7 @@ class Sensors():
         if not self.cliff:
             self.cliff = True
         
-        rospy.logwarn("Cliff event: " + str(data.CLIFF))
+        self.logger.warn("Cliff event: " + str(data.CLIFF))
 
     def _depthCallback(self, data):
         """Process depth data. Detect obstacles."""
@@ -143,7 +146,7 @@ class Sensors():
         try:
             min_index = np.nanargmin(sample[np.nonzero(sample)])
         except ValueError:
-            rospy.logerr("Encountered all NaN slice in depth image.")
+            self._logger.err("Encountered all NaN slice in depth image.")
             self.obstacle = True
             return
 
@@ -155,6 +158,7 @@ class Sensors():
             if not self.obstacle and not self.bump:
                 self.rec_turn = min_index[1] > w_center
                 self.obstacle = True
+                self._logger.warn("Encountered obstacle on the " + ("left" if self.rec_turn else "right") + ".")
         else:
             self.obstacle = False
         
@@ -170,4 +174,4 @@ class Sensors():
         """Handle wheel drops."""
         self.wheeldrop = (data.state == WheelDropEvent.DROPPED)
 
-        rospy.logwarn("Wheel drop event: " + str(data.wheel))
+        self._logger.warn("Wheel drop event: " + str(data.wheel))
