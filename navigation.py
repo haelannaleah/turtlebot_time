@@ -24,7 +24,7 @@ class Navigation(Motion):
     _AVOID_TIME = 1.5
     _BASE_WIDTH = 0.1778
     
-    def __init__(self, points, locations, neighbors, rooms):
+    def __init__(self, points, locations, neighbors, rooms, origin_id):
         
         # set up all the inherited variables from the motion class
         Motion.__init__(self)
@@ -33,6 +33,7 @@ class Navigation(Motion):
         self._logger = Logger("Navigation")
         
         self.floorPlan = FloorPlan(points, locations, neighbors, rooms)
+        self.origin_id = origin_id
 
         self.origin_pose = None
         self.cur_pose = None
@@ -162,6 +163,12 @@ class Navigation(Motion):
             return ((p.x - origin[0][0], p.y - origin[0][1]), angle - origin[1])
     
     def setOrigin(self, april_tags):
+        """
+            Set robot origin given april tag specifying origin.
+            NOTE: Map coordinate frame should reflect that the robot is facing the April tag when it sets origin:
+                Positive x should be in the direction of the april tag (intersecting the april tag perpendicularly)
+                Positive y should be to the left of the april tag (running parallel to the wall of the april tag)
+        """
         if self.cur_pose is None:
             return False
             
@@ -170,10 +177,12 @@ class Navigation(Motion):
             return False
         
         # extract the origin tag; the april tag data comes back in a different format than odometry
-        tag_data = next(tag.pose.pose for tag in april_tags if tag.id == 10)#self.origin_id)
+        tag_data = next(tag.pose.pose for tag in april_tags if tag.id == self.origin_id)
         
-        # set the y position to the forward displacement
-        tag_data.position.y = tag_data.position.z
+        # set the x position to the forward displacement, and y to the horizontal displacement
+        # consider transform listener
+        tag_data.position.x = tag_data.position.z
+        tag_data.position.y = tag_data.position.x
         
         # use our usual method to extract
         tag_pose = self.extractPose(tag_data.position, tag_data.orientation) 
@@ -182,19 +191,11 @@ class Navigation(Motion):
             self.turn(self._TURN_LEFT if tag_pose[1] < 0 else self._TURN_RIGHT)
             return False
         
-        # TODO: do this more robustly.
-        # TODO: we actually might need to switch x and y in general; might be worth reworking the map
-        # so that we don't have to.
-        # right now, we're getting an x and y offset from the robot for the april tags
-        # however, we want to superimpose these on an absolute coordinate system
-        # right now, this is perpendicular to the current system.
-        # we need to update the poses so that they aren't, possibly update the origin tag so that
-        # it's in a better location
         # convert the origin tag to a offset for setting the origin
         offset = (tag_pose[0][0]**2 + tag_pose[0][1]**2)**0.5
-        x = self.cur_pose[0][0] + offset * sin(tag_pose[1])
-        y = self.cur_pose[0][1] + offset * cos(tag_pose[1])
-        angle = self.cur_pose[1] + tag_pose[1] - self._HALF_PI
+        x = self.cur_pose[0][0] + offset * cos(tag_pose[1])
+        y = self.cur_pose[0][1] + offset * sin(tag_pose[1])
+        angle = self.cur_pose[1] + tag_pose[1]
         
         if angle > self._TWO_PI:
             angle -= self._TWO_PI

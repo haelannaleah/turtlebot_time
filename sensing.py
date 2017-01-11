@@ -53,7 +53,11 @@ class Sensors():
         self.april_publisher = rospy.Publisher('/vo', Odometry, queue_size = 10)
     
     def _aprilTagCallback(self, data):
-        """Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66"""
+        """
+            Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66
+            Note that April tag position data comes back in the base frame format
+        
+        """
         if data.markers:
             self.april_tags = data.markers
             self.landmarkPublisher()
