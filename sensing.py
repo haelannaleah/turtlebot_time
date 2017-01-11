@@ -158,7 +158,7 @@ class Sensors():
             if not self.obstacle and not self.bump:
                 self.rec_turn = min_index[1] > w_center
                 self.obstacle = True
-                self._logger.warn("Encountered obstacle on the " + ("left" if self.rec_turn else "right") + ".")
+                self._logger.warn("Encountered obstacle on the " + ("right" if self.rec_turn else "left") + ".")
         else:
             self.obstacle = False
         
