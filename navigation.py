@@ -32,6 +32,10 @@ class Navigation(Motion):
         # set up class logger
         self._logger = Logger("Navigation")
         
+        self._logger.debug(points,"points")
+        self._logger.debug(locations,"locations")
+        self._logger.debug(neighbors,"neighbors")
+        
         self.floorPlan = FloorPlan(points, locations, neighbors, rooms)
         self.origin_id = origin_id
 
