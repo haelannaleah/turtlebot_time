@@ -2,6 +2,8 @@ import cv2
 import rospy
 import numpy as np
 
+import MD2
+from logger import Logger
 from navigation import Navigation
 from sensing import Sensors
 
@@ -11,12 +13,14 @@ class Adventurebot():
         
         # set up ctrl-C shutdown behavior
         rospy.on_shutdown(self.shutdown)
-        rospy.loginfo("hello world")
+        self._logger = Logger("Adventurebot")
+        
+        self._logger.info("hello world")
 
         # set global refresh rate
         rate = rospy.Rate(10)
 
-        self.mover = Navigation()
+        self.mover = Navigation(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
         self.sensors = Sensors()
 
         turn = None
@@ -43,17 +47,17 @@ class Adventurebot():
             elif return_home:
                 if (self.mover.goToDestination((0,0))):
                     return_home = False
-                    print "WHOO HOME"
+                    self._logger.info("Returned home.")
                 
             else:
                 #return_home = self.mover.navigateToWaypoint((0,1))
                 if self.mover.goToDestination((-7.3152, 1.2192)):
                     return_home = True
-                    print "REACHED DEST"
+                    self._logger.info("Reached destination")
                 #return_home = self.mover.goToDestination((-7.3152,1.2192))
 
     def shutdown(self):
-        rospy.loginfo("goodbye, world")
+        self._logger.info("goodbye, world")
         self.mover.stop(True)
         rospy.sleep(2)
 

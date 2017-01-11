@@ -13,7 +13,7 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 from math import radians, atan2, cos, sin, pi
 from time import time
 
-import MD2
+from logger import Logger
 from MDgraph import FloorPlan
 from motion import Motion
 
@@ -29,8 +29,10 @@ class Navigation(Motion):
         # set up all the inherited variables from the motion class
         Motion.__init__(self)
         
-        # TODO: consider factoring out to make more general?
-        self.floorPlan = FloorPlan(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms)
+        # set up class logger
+        self._logger = Logger("Navigation")
+        
+        self.floorPlan = FloorPlan(points, locations, neighbors, rooms)
 
         self.origin_pose = None
         self.cur_pose = None
@@ -63,8 +65,8 @@ class Navigation(Motion):
             
         elif time() - self.avoid_time >= self._AVOID_TIME:
             #self.setPath()
-            print("next point:" + str(self.path[0]))
-            print("cur point:" + str(self.cur_pose))
+            self._logger.debug(self.cur_pose, "cur_pose", "intelligentAvoid")
+            self._logger.debug(self.path[0], "next_pose", "intelligentAvoid")
             self.avoiding = False
             
         else:
@@ -93,14 +95,13 @@ class Navigation(Motion):
                 self.destination = None
                 return False
                 
-            print self.path
+            self._logger.debug(self.path, "path", "goToDestination")
         
         # navigate to the current waypoint on the path
         if self.navigateToWaypoint(self.path[0]):
             # if we make it there, remove the current waypoint
-            # printing for debugging purposes
-            print("waypoint" + str(self.path.pop(0)))
-            print("cur_pose" + str(self.cur_pose))
+            self._logger.debug(self.cur_pose, "cur_pose", "goToDestination")
+            self._logger.debug(self.path.pop(0), "cur_waypoint", "goToDestination")
         
         # if the path is empty, we've reached our destination 
         if not self.path:
@@ -132,8 +133,8 @@ class Navigation(Motion):
             cur_orientation += self._TWO_PI
             
         if np.isclose(self.cur_pose[0], point, atol=.05).all():
-            rospy.loginfo("start pose: " + str(point[0]))
-            rospy.loginfo("cur_pose: " + str(self.cur_pose[0]))
+            self._logger.debug(point[0], "start_position", "navigateToWaypoint")
+            self._logger.debug(self.cur_pose[0], "cur_pose", "navigateToWaypoint")
             
             # we've more or less reached our waypoint!
             return True
@@ -179,7 +180,6 @@ class Navigation(Motion):
         
         if not np.isclose(tag_pose[1], 0, atol=.05):
             self.turn(self._TURN_LEFT if tag_pose[1] < 0 else self._TURN_RIGHT)
-            print "turning"
             return False
         
         # TODO: do this more robustly.
@@ -202,14 +202,13 @@ class Navigation(Motion):
             angle += self._TWO_PI
             
         self.origin_pose =  ((x,y),angle)
-        print "CURRENT POSE AND ORIGIN POSE"
-        print self.origin_pose
+        self._logger.debug(self.origin_pose, "origin_pose", "setOrigin")
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
         self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
         if self.origin_pose is not None:
-            print self.cur_pose
+            self._logger.debug(self.cur_pose, "cur_pose", "ekfCallback")
         #     #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
         #     self.origin_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
            
