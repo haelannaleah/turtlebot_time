@@ -24,7 +24,7 @@ class Navigation(Motion):
     _AVOID_TIME = 1.5
     _BASE_WIDTH = 0.1778
     
-    def __init__(self):
+    def __init__(self, points, locations, neighbors, rooms):
         
         # set up all the inherited variables from the motion class
         Motion.__init__(self)
