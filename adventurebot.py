@@ -20,7 +20,7 @@ class Adventurebot():
         self._logger.info("hello world")
 
         # set global refresh rate
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(100)
 
         self.mover = Navigation(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms, 10)
         self.sensors = Sensors()
