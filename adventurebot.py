@@ -27,10 +27,11 @@ class Adventurebot():
 
         turn = None
         return_home = False
+        
+        listener = tf.TransformListener()
+        
         while not rospy.is_shutdown():
-            listener = tf.TransformListener()
             if True:
-                now = rospy.Time(0)
                 try:
                     (trans, rot) = listener.lookupTransform("/odom", "/map", now)
                 except (tf.LookupException, tf.ConnectivityException):
