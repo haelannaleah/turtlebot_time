@@ -31,7 +31,10 @@ class Adventurebot():
             listener = tf.TransformListener()
             if True:
                 now = rospy.Time(0)
-                (trans, rot) = listener.lookupTransform("/odom", "/map", now)
+                try:
+                    (trans, rot) = listener.lookupTransform("/odom", "/map", now)
+                except:
+                    continue
                 print trans
                 print rot
                 
