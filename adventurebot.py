@@ -28,18 +28,18 @@ class Adventurebot():
         turn = None
         return_home = False
         
-        listener = tf.TransformListener()
+        #listener = tf.TransformListener()
         
         while not rospy.is_shutdown():
-            if True:
-                try:
-                    (trans, rot) = listener.lookupTransform("/odom", "/map", now)
-                except (tf.LookupException, tf.ConnectivityException):
-                    continue
-                print trans
-                print rot
+            # if True:
+            #     try:
+            #         (trans, rot) = listener.lookupTransform("/odom", "/map", now)
+            #     except (tf.LookupException, tf.ConnectivityException):
+            #         continue
+            #     print trans
+            #     print rot
                 
-            elif (self.sensors.wheeldrop or self.sensors.cliff):
+            if (self.sensors.wheeldrop or self.sensors.cliff):
                 return_home = True
                 self.mover.stop(True)
 
