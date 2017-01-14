@@ -43,6 +43,9 @@ class Navigation(Motion):
         self.avoiding = False
         self.avoid_time = None
         
+        self.transformationListener = tf.TransformListener()
+        
+        #rospy.Subscriber('odometry/filtered', , self._ekfCallback)
         rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
 
     def avoidObstacle(self, rec_turn):

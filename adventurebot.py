@@ -26,8 +26,12 @@ class Adventurebot():
         turn = None
         return_home = False
         while not rospy.is_shutdown():
-
-            if (self.sensors.wheeldrop or self.sensors.cliff):
+            listener = tf.TransformListener()
+            if True:
+                now = rospy.Time(0)
+                (trans, rot) = listener.lookupTransform("/map", "/base_link", now)
+                
+            elif (self.sensors.wheeldrop or self.sensors.cliff):
                 return_home = True
                 self.mover.stop(True)
 
@@ -55,6 +59,7 @@ class Adventurebot():
                     return_home = True
                     self._logger.info("Reached destination")
                 #return_home = self.mover.goToDestination((-7.3152,1.2192))
+        rate.sleep()
 
     def shutdown(self):
         self._logger.info("goodbye, world")
