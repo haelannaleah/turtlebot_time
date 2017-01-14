@@ -6,7 +6,7 @@
         <param name="odom_frame" value="odom"/>
         <param name="base_link_frame" value="base_footprint"/>      
         <param name="world_frame" value="odom"/>                
-        <param name="two_d_mode" value=true/>
+        <param name="two_d_mode" value="true"/>
             
         <param name="imu0" value="imu_data"/>
         <rosparam param="imu0_config">
