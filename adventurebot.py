@@ -32,6 +32,8 @@ class Adventurebot():
             if True:
                 now = rospy.Time(0)
                 (trans, rot) = listener.lookupTransform("/map", "/base_link", now)
+                print trans
+                print rot
                 
             elif (self.sensors.wheeldrop or self.sensors.cliff):
                 return_home = True
