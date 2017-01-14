@@ -1,5 +1,5 @@
 <launch>
-    <!-- Set up mappings for the robot_pose_ekf package -->
+    <!-- Set up mappings for the localization package -->
     <remap from="mobile_base/sensors/imu_data" to="imu_data" />
     <remap from="mobile_base/odom" to="odom" />
 
