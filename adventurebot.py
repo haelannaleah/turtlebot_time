@@ -33,7 +33,7 @@ class Adventurebot():
                 now = rospy.Time(0)
                 try:
                     (trans, rot) = listener.lookupTransform("/odom", "/map", now)
-                except:
+                except (tf.LookupException, tf.ConnectivityException):
                     continue
                 print trans
                 print rot
