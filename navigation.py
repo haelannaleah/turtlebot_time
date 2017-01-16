@@ -36,6 +36,8 @@ class Navigation(Motion):
         self.floorPlan = FloorPlan(points, locations, neighbors, rooms, landmarks)
 
         self.cur_pose = None
+        self.cur_position = None
+        self.cur_orientation = None
         self.path = None
         self.destination = None
         self.avoiding = False
@@ -48,6 +50,8 @@ class Navigation(Motion):
     
         # subscribe to location on map
         rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
+    
+        self.tfListener = tf.TransformListener()
 
     def avoidObstacle(self, rec_turn):
         """Given a reccomended turn, avoid obstacle."""
@@ -128,7 +132,7 @@ class Navigation(Motion):
                 True if we are close to the desired location, False otherwise.
         """
         desired_turn = atan2(point[1] - self.cur_pose[0][1], point[0] - self.cur_pose[0][0])
-        cur_orientation = self.cur_pose[1]
+        cur_orientation = tf.transformations.euler_from_quaternion(self.cur_pose[1])[-1]
 
         # if both the vectors are in adjacent quadrants where the angles wrap around,
         # we need to make sure that they treat each other like adjacent quadrants
@@ -160,8 +164,7 @@ class Navigation(Motion):
 
     def extractPose(self, p, q, origin=None):
         """Extract current pose relative to the origin."""
-        angle = tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1]
-        return ((p.x, p.y), angle)
+        return ((p.x, p.y), (q.x, q.y, q.z, q.w))
     
     def setOrigin(self, april_tags):
         """
@@ -212,37 +215,49 @@ class Navigation(Motion):
         Note that April tag position data comes back in the base frame format
         
         """
-            if data.markers:
-                tags = data.markers
-                # TODO: only include recognized landmarks in the april tags
-                self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
-                if len(self.landmarks) > 0:
-                    self.landmarkPublisher()
-                else:
-                    self.landmarks = None
+        if data.markers:
+            # only include
+            tags = data.markers
+            self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
+            
+            if len(self.landmarks) > 0:
+                self.landmarkPublisher()
             else:
                 self.landmarks = None
+        else:
+            self.landmarks = None
     
     def _publishLandmarks(self):
         """Publish information about current position based on landmarks."""
         
         # get the closest April tag, in case we see more than one
         nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
-        location_msg = PoseStamped()
+        try:
+            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
+            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
         
-        # TODO: fix error: filter time older than vo message buffer
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            self._logger.warn("Unable to publish landmark data: " + str(nearby))
+            return
+
+        location_msg = PoseStamped()
         location_msg.header.stamp = rospy.Time.now()
         location_msg.header.frame_id = 'apriltags'
-        
-        # note that in april tag messages, x position is forward displacement and z is horizontal displacement
-        # in map pose messages, the x is forward displacement and the y is horizontal displacement
-        location_msg.pose.position.x = nearby.position.z + self.landmarks[nearby.id][0]
-        location_msg.pose.position.y = nearby.position.x + self.landmarks[nearby.id][1]
+
+        location_msg.pose.position.x = position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
+        location_msg.pose.position.y = position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
         location_msg.pose.position.z = 0
-        
-        # TODO: incorporate landmark map data
+#
+#        # note that in april tag messages, x position is forward displacement and z is horizontal displacement
+#        # in map pose messages, the x is forward displacement and the y is horizontal displacement
+#        location_msg.pose.position.x = nearby.position.z + self.landmarks[nearby.id][0]
+#        location_msg.pose.position.y = nearby.position.x + self.landmarks[nearby.id][1]
+#        location_msg.pose.position.z = 0
+#
         # TODO: There's some sort of transformation that needs to take place here
         location_msg.pose.orientation = nearby.orientation
+        
+        self.marker_publisher.publish(location_msg)
 
     
 # publish message
