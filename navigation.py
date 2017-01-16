@@ -10,7 +10,7 @@ import tf
 
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from copy import deepcopy
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
 from math import radians, atan2, cos, sin, pi
 from time import time
 
@@ -236,21 +236,21 @@ class Navigation(Motion):
         
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
         tag_relative_position = (nearby.pose.position.z, self.pose.position.x)
-#        try:
-#            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
-#            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
-#        
-#        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-#            self._logger.warn("Unable to publish landmark data: " + str(nearby))
-#            return
-#
-#        location_msg = PoseStamped()
-#        location_msg.header.stamp = rospy.Time.now()
-#        location_msg.header.frame_id = 'apriltags'
-#
-#        location_msg.pose.position.x = position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
-#        location_msg.pose.position.y = position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
-#        location_msg.pose.position.z = 0
+        try:
+            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
+            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
+        
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            self._logger.warn("Unable to publish landmark data: " + str(nearby))
+            return
+
+        location_msg = PoseWithCovarianceStamped()
+        location_msg.header.stamp = rospy.Time.now()
+        location_msg.header.frame_id = 'apriltags'
+
+        location_msg.pose.pose.position.x = position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
+        location_msg.pose.pose.position.y = position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
+        location_msg.pose.pose.position.z = 0
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
 #        # in map pose messages, the x is forward displacement and the y is horizontal displacement
@@ -259,9 +259,17 @@ class Navigation(Motion):
 #        location_msg.pose.position.z = 0
 #
         # TODO: There's some sort of transformation that needs to take place here
-        location_msg.pose.orientation = nearby.orientation
+        location_msg.pose.pose.orientation = nearby.orientation
+        
+        location_msg.covariance = [0.0001, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                   0.0, 0.0001, 0.0, 0.0, 0.0, 0.0,
+                                   0.0, 0.0, 0.0001, 0.0, 0.0, 0.0,
+                                   0.0, 0.0, 0.0, 0.0001, 0.0, 0.0,
+                                   0.0, 0.0, 0.0, 0.0, 0.0001, 0.0,
+                                   0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
         
         self.landmark_publisher.publish(location_msg)
+        self._logger.debug("Published location! " + str(location_msg))
 
     
 # publish message
