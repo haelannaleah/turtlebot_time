@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # set up the tf node
     listener = tf.TransformListener()
     
-    rospy.rate(100)
+    rate = rospy.Rate(100)
     while not rospy.is_shutdown():
         try:
             map_trans, map_rot = listener.lookupTransform("/base_footprint", "/map", rospy.Time(0))
@@ -28,3 +28,4 @@ if __name__ == '__main__':
             print odom_rot
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
+        rate.sleep()
