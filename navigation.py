@@ -273,7 +273,7 @@ class Navigation(Motion):
                                         0.0, 0.0, 0.0, 0.0, 0.0001, 0.0,
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
         
-        #self.landmark_publisher.publish(location_msg)
+        self.landmark_publisher.publish(location_msg)
         #self._logger.debug("Published location! " + str(location_msg))
 
     
