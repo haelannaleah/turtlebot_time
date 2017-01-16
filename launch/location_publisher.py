@@ -21,13 +21,13 @@ class FramePublisher():
         self.rate = rospy.Rate(100)
         
         while not rospy.is_shutdown():
-            self.publish("map", self.map_publisher)
-            self.publish("odom", self.odom_publisher)
+            self._publish("map", self.map_publisher)
+            self._publish("odom", self.odom_publisher)
             self.rate.sleep()
 
-    def publish(self, frame, publisher):
+    def _publish(self, frame, publisher):
         try:
-            position, orientation = self.listener.lookupTransform("/base_footprint", frame, rospy.Time(0))
+            position, orientation = self.transform_listener.lookupTransform("/base_footprint", frame, rospy.Time(0))
             print frame
             print position
             print orientation
