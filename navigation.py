@@ -8,6 +8,7 @@ import numpy as np
 import rospy
 import tf
 
+from ar_track_alvar_msgs.msg import AlvarMarkers
 from copy import deepcopy
 from geometry_msgs.msg import PoseStamped
 from math import radians, atan2, cos, sin, pi
