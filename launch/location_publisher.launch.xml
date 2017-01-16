@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="adventurebot_frames" type="location_publisher.py" name="location_broadcaster" />
+</launch>
