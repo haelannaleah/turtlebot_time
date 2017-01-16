@@ -25,7 +25,7 @@ class FramePublisher():
             self._publish("odom", self.odom_publisher)
             self.rate.sleep()
 
-    def _publish(self, frame, publisher):
+    def _publish(self, frame, frame_publisher):
         try:
             position, orientation = self.transform_listener.lookupTransform("/base_footprint", frame, rospy.Time(0))
             print frame
@@ -41,7 +41,7 @@ class FramePublisher():
             frame_pose.orientation.z = orientation[2]
             frame_pose.orientation.w = orientation[3]
             
-            publisher(frame_pose)
+            frame_publisher(frame_pose)
             
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             rospy.logwarn("Unable to publish to " + str(frame))
