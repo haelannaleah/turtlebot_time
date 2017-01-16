@@ -7,7 +7,7 @@ Frames are fed information by robot_location
 import rospy
 import tf
 
-from geometry_msgs.msg import Pose, Twist
+from geometry_msgs.msg import PoseStamped
 
 
 class FramePublisher():
@@ -32,7 +32,9 @@ class FramePublisher():
             print position
             print orientation
             
-            frame_pose = Pose()
+            frame_pose = PoseStamped()
+            frame_pose.header.stamp = rospy.Time.now()
+            frame_pose.frame_id = frame
             frame_pose.position.x = position[0]
             frame_pose.position.y = position[1]
             frame_pose.position.z = position[2]
