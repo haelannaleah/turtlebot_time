@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 location_publisher.py
 
