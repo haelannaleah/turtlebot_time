@@ -264,7 +264,7 @@ class Navigation(Motion):
 #        location_msg.pose.position.z = 0
 #
         # TODO: There's some sort of transformation that needs to take place here
-        location_msg.pose.pose.orientation = nearby.pose.orientation
+        location_msg.pose.pose.orientation = nearby.pose.pose.orientation
         
         location_msg.covariance = [0.0001, 0.0, 0.0, 0.0, 0.0, 0.0,
                                    0.0, 0.0001, 0.0, 0.0, 0.0, 0.0,
