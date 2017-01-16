@@ -58,3 +58,6 @@ rooms = {'253' : 'A',
      '237' : 'R',
      '235' : 'T'
     }
+
+# of the form {tag_id : map_location}
+landmarks = {10 : (0,0)}

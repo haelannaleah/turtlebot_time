@@ -20,7 +20,7 @@ class Adventurebot():
         # set global refresh rate
         rate = rospy.Rate(100)
 
-        self.mover = Navigation(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms, 10)
+        self.mover = Navigation(MD2.points, MD2.locations, MD2.neighbors, MD2.rooms, MD2.landmarks)
         self.sensors = Sensors()
 
         turn = None
@@ -37,10 +37,6 @@ class Adventurebot():
                     self.mover.stop(True)
                 else:
                     self.mover.avoidObstacle(self.sensors.rec_turn)
-                    
-            elif (self.mover.origin_pose is None):
-                # look for april tag
-                self.mover.setOrigin(self.sensors.april_tags)
 
             elif ((self.sensors.obstacle and self.mover.walking) or self.mover.avoiding):
                 self.mover.intelligentAvoid(self.sensors.rec_turn, self.sensors.obstacle)

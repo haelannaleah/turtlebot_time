@@ -16,7 +16,7 @@ class Waypoint():
         self.terminal = bool(len(self.neighbors) <= 1)
 
 class FloorPlan():
-    def __init__(self, point_ids, locations, neighbors, landmarks):
+    def __init__(self, point_ids, locations, neighbors, rooms, landmarks):
         """
             Instantiate a FloorPlan object.
             
@@ -25,10 +25,13 @@ class FloorPlan():
                 locations: A dictionary mapping point_ids to tuples representing locations.
                 neighbors: A dictionary mapping point_ids to lists containing other point_ids
                     representing the current node's neighbors.
-                landmarks: A dictionary mapping room numbers to point_ids.
+                rooms: A dictionary mapping room numbers to point_ids.
+                landmarks: A dictionary mapping April Tag landmark ids to their absolute location 
+                    on the floorplan.
         """
         
         self.landmarks = set(landmarks)
+        self.rooms = set(rooms)
         self.graph = {}
         for point_id in point_ids:
             self.graph[point_id] = Waypoint(locations[point_id], neighbors[point_id], True)

@@ -48,13 +48,13 @@ class Sensors():
         self.wheeldrop = False
         rospy.Subscriber('mobile_base/events/wheel_drop', WheelDropEvent, self._wheelDropCallback)
         
-        # subscribe to April Tag data
-        self.april_tags = None
-        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
-        
-        # publish landmark data
-        self.april_publisher = rospy.Publisher('/vo', Odometry, queue_size = 10)
-    
+#        # subscribe to April Tag data
+#        self.april_tags = None
+#        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
+#        
+#        # publish landmark data
+#        self.april_publisher = rospy.Publisher('/vo', Odometry, queue_size = 10)
+
     def _aprilTagCallback(self, data):
         """
             Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66

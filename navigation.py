@@ -24,7 +24,7 @@ class Navigation(Motion):
     _AVOID_TIME = 1.5
     _BASE_WIDTH = 0.1778
     
-    def __init__(self, points, locations, neighbors, rooms, origin_id):
+    def __init__(self, points, locations, neighbors, rooms, landmarks):
         
         # set up all the inherited variables from the motion class
         Motion.__init__(self)
@@ -32,17 +32,21 @@ class Navigation(Motion):
         # set up class logger
         self._logger = Logger("Navigation")
         
-        self.floorPlan = FloorPlan(points, locations, neighbors, rooms)
-        self.origin_id = origin_id
+        # set up floor plan and mapping
+        self.floorPlan = FloorPlan(points, locations, neighbors, rooms, landmarks)
 
-        self.origin_pose = None
         self.cur_pose = None
-        
         self.path = None
         self.destination = None
         self.avoiding = False
         self.avoid_time = None
         
+        # set up landmark data
+        self.landmarks = None
+        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
+        self.marker_publisher = rospy.Publisher('apriltags', PoseStamped, self._publishLandmarks)
+    
+        # subscribe to location on map
         rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
 
     def avoidObstacle(self, rec_turn):
@@ -157,10 +161,7 @@ class Navigation(Motion):
     def extractPose(self, p, q, origin=None):
         """Extract current pose relative to the origin."""
         angle = tf.transformations.euler_from_quaternion([q.x, q.y, q.z, q.w])[-1]
-        if origin is None:
-            return ((p.x, p.y), angle)
-        else:
-            return ((p.x - origin[0][0], p.y - origin[0][1]), angle - origin[1])
+        return ((p.x, p.y), angle)
     
     def setOrigin(self, april_tags):
         """
@@ -204,10 +205,52 @@ class Navigation(Motion):
             
         self.origin_pose =  ((x,y),angle)
         self._logger.debug(self.origin_pose, "origin_pose", "setOrigin")
+
+    def _aprilTagCallback(self, data):
+        """
+        Process April tags. More info: https://piazza.com/class/ik07vwdrcls4pz?cid=66
+        Note that April tag position data comes back in the base frame format
+        
+        """
+            if data.markers:
+                tags = data.markers
+                # TODO: only include recognized landmarks in the april tags
+                self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
+                if len(self.landmarks) > 0:
+                    self.landmarkPublisher()
+                else:
+                    self.landmarks = None
+            else:
+                self.landmarks = None
+    
+    def _publishLandmarks(self):
+        """Publish information about current position based on landmarks."""
+        
+        # get the closest April tag, in case we see more than one
+        nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
+        location_msg = PoseStamped()
+        
+        # TODO: fix error: filter time older than vo message buffer
+        location_msg.header.stamp = rospy.Time.now()
+        location_msg.header.frame_id = 'apriltags'
+        
+        # note that in april tag messages, x position is forward displacement and z is horizontal displacement
+        # in map pose messages, the x is forward displacement and the y is horizontal displacement
+        location_msg.pose.position.x = nearby.position.z + self.landmarks[nearby.id][0]
+        location_msg.pose.position.y = nearby.position.x + self.landmarks[nearby.id][1]
+        location_msg.pose.position.z = 0
+        
+        # TODO: incorporate landmark map data
+        # TODO: There's some sort of transformation that needs to take place here
+        location_msg.pose.orientation = nearby.orientation
+
+    
+# publish message
+#self.april_publisher.publish(msg)
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        self.cur_pose = self.extractPose(data.pose.position, data.pose.orientation, self.origin_pose)
+        self.cur_pose = self.extractPose(data.pose.position, data.pose.orientation)
         #if self.origin_pose is not None:
             #self._logger.debug(self.cur_pose, "cur_pose", "ekfCallback")
         #     #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
