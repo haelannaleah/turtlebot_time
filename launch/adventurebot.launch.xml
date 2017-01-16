@@ -10,7 +10,6 @@
     <!-- Set up odometry and localization helpers -->
     <include file="ar_tags.launch.xml" />
     <include file="robot_localization.launch.xml" />
-    <include file="location_publisher.launch.xml" />
     
     <!-- Set up mapping transformer -->
     <include file="$(find adventurebot_frames)/launch/location_publisher.launch.xml" />
