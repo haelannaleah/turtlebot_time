@@ -241,7 +241,7 @@ class Navigation(Motion):
             position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
         
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            self._logger.warn("Unable to publish landmark data: " + str(nearby))
+            self._logger.debug("Unable to publish landmark data: " + str(nearby))
             return
 
         location_msg = PoseWithCovarianceStamped()
