@@ -7,8 +7,6 @@ from logger import Logger
 from navigation import Navigation
 from sensing import Sensors
 
-import tf
-
 class Adventurebot():
     def __init__(self):
         rospy.init_node('Adventurebot', anonymous = False)
@@ -28,16 +26,7 @@ class Adventurebot():
         turn = None
         return_home = False
         
-        #listener = tf.TransformListener()
-        
         while not rospy.is_shutdown():
-            # if True:
-            #     try:
-            #         (trans, rot) = listener.lookupTransform("/odom", "/map", now)
-            #     except (tf.LookupException, tf.ConnectivityException):
-            #         continue
-            #     print trans
-            #     print rot
                 
             if (self.sensors.wheeldrop or self.sensors.cliff):
                 return_home = True

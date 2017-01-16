@@ -9,7 +9,7 @@ import rospy
 import tf
 
 from copy import deepcopy
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseStamped
 from math import radians, atan2, cos, sin, pi
 from time import time
 
@@ -43,10 +43,7 @@ class Navigation(Motion):
         self.avoiding = False
         self.avoid_time = None
         
-        self.transformationListener = tf.TransformListener()
-        
-        #rospy.Subscriber('odometry/filtered', , self._ekfCallback)
-        rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self._ekfCallback)
+        rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
 
     def avoidObstacle(self, rec_turn):
         """Given a reccomended turn, avoid obstacle."""
