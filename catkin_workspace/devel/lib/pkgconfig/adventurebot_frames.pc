@@ -1,0 +1,8 @@
+prefix=/home/turtlebot/turtlebot_time/catkin_workspace/devel
+
+Name: adventurebot_frames
+Description: Description of adventurebot_frames
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/turtlebot/turtlebot_time/catkin_workspace/devel/lib 
+Requires: 
