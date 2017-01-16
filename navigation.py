@@ -47,7 +47,7 @@ class Navigation(Motion):
         # set up landmark data
         self.landmarks = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
-        self.marker_publisher = rospy.Publisher('apriltags', PoseStamped, self._publishLandmarks)
+        self.landmark_publisher = rospy.Publisher('apriltags', PoseStamped, self._publishLandmarks)
     
         # subscribe to location on map
         rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
@@ -222,7 +222,7 @@ class Navigation(Motion):
             self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
             
             if len(self.landmarks) > 0:
-                self.landmarkPublisher()
+                self.publishLandmarks()
             else:
                 self.landmarks = None
         else:
@@ -258,7 +258,7 @@ class Navigation(Motion):
         # TODO: There's some sort of transformation that needs to take place here
         location_msg.pose.orientation = nearby.orientation
         
-        self.marker_publisher.publish(location_msg)
+        self.landmark_publisher.publish(location_msg)
 
     
 # publish message
