@@ -13,7 +13,7 @@
     <include file="location_publisher.launch.xml" />
     
     <!-- Set up mapping transformer -->
-    <include file="$(find adventurebot_frames)/launch/location_publisher.launch" />
+    <include file="$(find adventurebot_frames)/launch/location_publisher.launch.xml" />
     
     <!-- <include file="robot_pose_ekf.launch.xml" /> -->
     <!-- <include file="visual_odometry.launch.xml" /> -->
