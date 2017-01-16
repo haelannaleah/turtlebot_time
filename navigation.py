@@ -233,23 +233,26 @@ class Navigation(Motion):
         
         # get the closest April tag, in case we see more than one
         nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
-        try:
-            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
-            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
         
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            self._logger.warn("Unable to publish landmark data: " + str(nearby))
-            return
-
-        location_msg = PoseStamped()
-        location_msg.header.stamp = rospy.Time.now()
-        location_msg.header.frame_id = 'apriltags'
-
-        location_msg.pose.position.x = position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
-        location_msg.pose.position.y = position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
-        location_msg.pose.position.z = 0
+        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
+        tag_relative_position = (nearby.pose.position.z, self.pose.position.x)
+#        try:
+#            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
+#            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
+#        
+#        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+#            self._logger.warn("Unable to publish landmark data: " + str(nearby))
+#            return
 #
-#        # note that in april tag messages, x position is forward displacement and z is horizontal displacement
+#        location_msg = PoseStamped()
+#        location_msg.header.stamp = rospy.Time.now()
+#        location_msg.header.frame_id = 'apriltags'
+#
+#        location_msg.pose.position.x = position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
+#        location_msg.pose.position.y = position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
+#        location_msg.pose.position.z = 0
+#
+#        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
 #        # in map pose messages, the x is forward displacement and the y is horizontal displacement
 #        location_msg.pose.position.x = nearby.position.z + self.landmarks[nearby.id][0]
 #        location_msg.pose.position.y = nearby.position.x + self.landmarks[nearby.id][1]
@@ -267,6 +270,7 @@ class Navigation(Motion):
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
         self.cur_pose = self.extractPose(data.pose.position, data.pose.orientation)
+        print tf.transformations.euler_from_quaternion(self.cur_pose[1])[-1]
         #if self.origin_pose is not None:
             #self._logger.debug(self.cur_pose, "cur_pose", "ekfCallback")
         #     #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
