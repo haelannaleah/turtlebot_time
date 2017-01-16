@@ -266,12 +266,12 @@ class Navigation(Motion):
         # TODO: There's some sort of transformation that needs to take place here
         location_msg.pose.pose.orientation = nearby.pose.pose.orientation
         
-        location_msg.covariance = [0.0001, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                   0.0, 0.0001, 0.0, 0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0001, 0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0, 0.0001, 0.0, 0.0,
-                                   0.0, 0.0, 0.0, 0.0, 0.0001, 0.0,
-                                   0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
+        location_msg.pose.covariance = [0.0001, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                        0.0, 0.0001, 0.0, 0.0, 0.0, 0.0,
+                                        0.0, 0.0, 0.0001, 0.0, 0.0, 0.0,
+                                        0.0, 0.0, 0.0, 0.0001, 0.0, 0.0,
+                                        0.0, 0.0, 0.0, 0.0, 0.0001, 0.0,
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
         
         #self.landmark_publisher.publish(location_msg)
         #self._logger.debug("Published location! " + str(location_msg))
