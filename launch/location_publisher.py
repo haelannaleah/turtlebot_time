@@ -34,14 +34,14 @@ class FramePublisher():
             
             frame_pose = PoseStamped()
             frame_pose.header.stamp = rospy.Time.now()
-            frame_pose.frame_id = frame
-            frame_pose.position.x = position[0]
-            frame_pose.position.y = position[1]
-            frame_pose.position.z = position[2]
-            frame_pose.orientation.x = orientation[0]
-            frame_pose.orientation.y = orientation[1]
-            frame_pose.orientation.z = orientation[2]
-            frame_pose.orientation.w = orientation[3]
+            frame_pose.header.frame_id = frame
+            frame_pose.pose.position.x = position[0]
+            frame_pose.pose.position.y = position[1]
+            frame_pose.pose.position.z = position[2]
+            frame_pose.pose.orientation.x = orientation[0]
+            frame_pose.pose.orientation.y = orientation[1]
+            frame_pose.pose.orientation.z = orientation[2]
+            frame_pose.pose.orientation.w = orientation[3]
             
             frame_publisher.publish(frame_pose)
             
