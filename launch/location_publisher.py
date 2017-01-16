@@ -17,6 +17,7 @@ if __name__ == '__main__':
     while not rospy.is_shutdown():
         try:
             map_trans, map_rot = listener.lookupTransform("/base_footprint", "/map", rospy.Time(0))
+            print "MAP"
             print map_trans
             print map_rot
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
@@ -24,6 +25,7 @@ if __name__ == '__main__':
         
         try:
             odom_trans, odom_rot = listener.lookupTransform("/base_footprint", "/odom", rospy.Time(0))
+            print "ODOM"
             print odom_trans
             print odom_rot
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
