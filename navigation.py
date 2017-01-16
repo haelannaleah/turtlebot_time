@@ -236,6 +236,7 @@ class Navigation(Motion):
         
         # get the closest April tag, in case we see more than one
         nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
+        self._logger.info("Spotted landmark: " + str(nearby.id))
         
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
 #        tag_relative_position = (nearby.pose.pose.position.z, nearby.pose.pose.position.x)
@@ -274,7 +275,7 @@ class Navigation(Motion):
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
         
         self.landmark_publisher.publish(location_msg)
-        #self._logger.debug("Published location! " + str(location_msg))
+        self._logger.debug("Published location: " + str(location_msg))
 
     
 # publish message
