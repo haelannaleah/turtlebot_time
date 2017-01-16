@@ -9,9 +9,9 @@ import tf
 
 from geometry_msgs.msg import PoseStamped
 
-
 class FramePublisher():
     def __init__(self):
+        """ Publish map and odometry frame data based on tf transformations. """
         rospy.init_node('FramePublisher')
         
         self.transform_listener = tf.TransformListener()
@@ -26,12 +26,17 @@ class FramePublisher():
             self.rate.sleep()
 
     def _publish(self, frame, frame_publisher):
+        """ 
+            Publish data, if possible. 
+            
+            Args:
+                frame: A string representing the frame we want the translation from base_footprint to.
+                frame_publisher: A rospy publisher object on which to publish that transformation
+        """
         try:
             position, orientation = self.transform_listener.lookupTransform("/base_footprint", frame, rospy.Time(0))
-            print frame
-            print position
-            print orientation
             
+            # create new PoseStamped object
             frame_pose = PoseStamped()
             frame_pose.header.stamp = rospy.Time.now()
             frame_pose.header.frame_id = frame
@@ -43,11 +48,11 @@ class FramePublisher():
             frame_pose.pose.orientation.z = orientation[2]
             frame_pose.pose.orientation.w = orientation[3]
             
+            # publish the pose
             frame_publisher.publish(frame_pose)
             
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            rospy.logwarn("Unable to publish to " + str(frame))
-            return
+            rospy.logwarn("Unable to publish pose data to " + str(frame))
 
 if __name__ == '__main__':
     frame = FramePublisher()
