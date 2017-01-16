@@ -25,7 +25,7 @@ class FramePublisher():
             self.publish("odom", self.odom_publisher)
             self.rate.sleep()
 
-    def publish(frame, publisher):
+    def publish(self, frame, publisher):
         try:
             position, orientation = listener.lookupTransform("/base_footprint", frame, rospy.Time(0))
             print frame
