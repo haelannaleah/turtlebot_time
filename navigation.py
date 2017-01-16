@@ -253,8 +253,8 @@ class Navigation(Motion):
         location_msg.header.stamp = rospy.Time.now()
         location_msg.header.frame_id = 'apriltags'
 
-        location_msg.pose.pose.position.x = position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
-        location_msg.pose.pose.position.y = position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
+        location_msg.pose.pose.position.x = 0 #position[0] - self.cur_position[0][0] + self.landmarks[nearby.id][0]
+        location_msg.pose.pose.position.y = 0 #position[1] - self.cur_position[0][1] + self.landmarks[nearby.id][1]
         location_msg.pose.pose.position.z = 0
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
