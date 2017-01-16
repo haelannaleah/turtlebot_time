@@ -7,27 +7,45 @@ Frames are fed information by robot_location
 import rospy
 import tf
 
-if __name__ == '__main__':
-    rospy.init_node('frame_transformations')
-    
-    # set up the tf node
-    listener = tf.TransformListener()
-    
-    rate = rospy.Rate(100)
-    while not rospy.is_shutdown():
-        try:
-            map_trans, map_rot = listener.lookupTransform("/base_footprint", "/map", rospy.Time(0))
-            print "MAP"
-            print map_trans
-            print map_rot
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            continue
+from geometry_msgs.msg import Pose, Twist
+
+
+class FramePublisher():
+    def __init__(self):
+        rospy.init_node('FramePublisher')
         
+        self.transform_listener = tf.TransformListener()
+        
+        self.map_publisher = rospy.Publisher('map_frame/', Pose, queue_size=10)
+        self.odom_publisher = rospy.Publisher('odom_frame/', Pose, queue_size=10)
+        self.rate = rospy.Rate(100)
+        
+        while not rospy.is_shutdown():
+            self.publish("map", self.map_publisher)
+            self.publish("odom", self.odom_publisher)
+            self.rate.sleep()
+
+    def publish(frame, publisher):
         try:
-            odom_trans, odom_rot = listener.lookupTransform("/base_footprint", "/odom", rospy.Time(0))
-            print "ODOM"
-            print odom_trans
-            print odom_rot
+            position, orientation = listener.lookupTransform("/base_footprint", frame, rospy.Time(0))
+            print frame
+            print position
+            print orientation
+            
+            new_pose = Pose()
+            new_pose.position.x = position[0]
+            new_pose.position.y = position[1]
+            new_pose.position.z = position[2]
+            new_pose.orientation.x = orientation[0]
+            new_pose.orientation.y = orientation[1]
+            new_pose.orientation.z = orientation[2]
+            new_pose.orientation.w = orientation[3]
+            
+            publisher(new_pose)
+            
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            continue
-        rate.sleep()
+            rospy.logwarn("Unable to publish to " + str(frame))
+            return
+
+if __name__ == '__main__':
+    frame = FramePublisher()
