@@ -222,7 +222,7 @@ class Navigation(Motion):
             self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
             
             if len(self.landmarks) > 0:
-                self.publishLandmarks()
+                self._publishLandmarks()
             else:
                 self.landmarks = None
         else:
