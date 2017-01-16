@@ -60,6 +60,6 @@ rooms = {'253' : 'A',
     }
 
 # of the form {tag_id : map_location}
-landmarks = {10 : (0,0)
+landmarks = {10 : (0,0),
     17 : (0,0)
     }
