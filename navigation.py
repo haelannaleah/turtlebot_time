@@ -231,18 +231,23 @@ class Navigation(Motion):
     def _publishLandmarks(self):
         """Publish information about current position based on landmarks."""
         
+        # TODO: fun fun fun coordinate transformations between the map frame and the robot frame
+        # should be a good time...
+        
         # get the closest April tag, in case we see more than one
         nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
-        tag_relative_position = (nearby.pose.pose.position.z, nearby.pose.pose.position.x)
-        try:
-            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
-            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
-        
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            self._logger.debug("Unable to publish landmark data: " + str(nearby))
-            return
+#        tag_relative_position = (nearby.pose.pose.position.z, nearby.pose.pose.position.x)
+#        try:
+#            t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
+#            position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
+#        
+#            print position
+#        
+#        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+#            self._logger.debug("Unable to publish landmark data: " + str(nearby))
+#            return
 
         location_msg = PoseWithCovarianceStamped()
         location_msg.header.stamp = rospy.Time.now()
@@ -268,8 +273,8 @@ class Navigation(Motion):
                                    0.0, 0.0, 0.0, 0.0, 0.0001, 0.0,
                                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
         
-        self.landmark_publisher.publish(location_msg)
-        self._logger.debug("Published location! " + str(location_msg))
+        #self.landmark_publisher.publish(location_msg)
+        #self._logger.debug("Published location! " + str(location_msg))
 
     
 # publish message
