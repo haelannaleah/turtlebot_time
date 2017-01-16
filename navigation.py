@@ -47,7 +47,7 @@ class Navigation(Motion):
         # set up landmark data
         self.landmarks = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
-        self.landmark_publisher = rospy.Publisher('apriltags', PoseStamped, self._publishLandmarks)
+        self.landmark_publisher = rospy.Publisher('apriltags', PoseWithCovarianceStamped, self._publishLandmarks)
     
         # subscribe to location on map
         rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
@@ -232,7 +232,7 @@ class Navigation(Motion):
         """Publish information about current position based on landmarks."""
         
         # get the closest April tag, in case we see more than one
-        nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
+        nearby = min(self.landmarks, key = lambda t: t.pose.position.x**2 + t.pose.position.y**2)
         
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
         tag_relative_position = (nearby.pose.position.z, self.pose.position.x)
