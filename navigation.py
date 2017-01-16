@@ -235,7 +235,7 @@ class Navigation(Motion):
         nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
-        tag_relative_position = (nearby.pose.pose.position.z, self.pose.pose.position.x)
+        tag_relative_position = (nearby.pose.pose.position.z, nearby.pose.pose.position.x)
         try:
             t = self.tfListener.getLatestCommonTime("/map", nearby.header.frame_id)
             position, orientation = self.tfListener.lookupTransform("/map", nearby.header.frame_id, t)
