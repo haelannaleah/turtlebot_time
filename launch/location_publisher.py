@@ -41,7 +41,7 @@ class FramePublisher():
             frame_pose.orientation.z = orientation[2]
             frame_pose.orientation.w = orientation[3]
             
-            frame_publisher(frame_pose)
+            frame_publisher.publish(frame_pose)
             
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             rospy.logwarn("Unable to publish to " + str(frame))
