@@ -207,7 +207,7 @@ class Navigation(Motion):
     
     def _ekfCallback(self, data):
         """Extract current position and orientation data."""
-        self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, self.origin_pose)
+        self.cur_pose = self.extractPose(data.pose.position, data.pose.orientation, self.origin_pose)
         #if self.origin_pose is not None:
             #self._logger.debug(self.cur_pose, "cur_pose", "ekfCallback")
         #     #self.cur_pose = self.extractPose(data.pose.pose.position, data.pose.pose.orientation, ((0,self._BASE_WIDTH),0))
