@@ -16,8 +16,8 @@ class FramePublisher():
         
         self.transform_listener = tf.TransformListener()
         
-        self.map_publisher = rospy.Publisher('map_frame/', Pose, queue_size=10)
-        self.odom_publisher = rospy.Publisher('odom_frame/', Pose, queue_size=10)
+        self.map_publisher = rospy.Publisher('map_frame/', PoseStamped, queue_size=10)
+        self.odom_publisher = rospy.Publisher('odom_frame/', PoseStamped, queue_size=10)
         self.rate = rospy.Rate(100)
         
         while not rospy.is_shutdown():
