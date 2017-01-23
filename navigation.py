@@ -238,6 +238,16 @@ class Navigation(Motion):
         nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         self._logger.info("Spotted landmark: " + str(nearby.id))
         
+        # get the local position (such that the z and x axis aligns with the x and y axis in the global frame
+        local_position = np.array([nearby.pose.pose.position.z],[-nearby.pose.pose.position.x], [1])
+        
+        # create translate matrix (to get back to the global original frame)
+        theta = -radians(tf.transformations.euler_from_quaternion(self.cur_pose[1])[-1])
+        cur_x, cur_y = self.cur_pose[0]
+        translation_matrix = np.array([cos(theta), -sin(theta), cur_t],
+                                      [sin(theta), cos(theta) , cur_y],
+                                      [0         , 0          , 1    ])
+        
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
 #        tag_relative_position = (nearby.pose.pose.position.z, nearby.pose.pose.position.x)
 #        try:
@@ -253,9 +263,11 @@ class Navigation(Motion):
         location_msg = PoseWithCovarianceStamped()
         location_msg.header.stamp = rospy.Time.now()
         location_msg.header.frame_id = 'apriltags'
+        
+        x, y, _ = np.dot(translation_matrix, local_position)
 
-        location_msg.pose.pose.position.x = self.landmarks[nearby.id][0]
-        location_msg.pose.pose.position.y = self.landmarks[nearby.id][1]
+        location_msg.pose.pose.position.x = x
+        location_msg.pose.pose.position.y = y
         location_msg.pose.pose.position.z = 0
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
