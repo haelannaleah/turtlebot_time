@@ -47,7 +47,7 @@ class Navigation(Motion):
         # set up landmark data
         self.landmarks = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
-        self.landmark_publisher = rospy.Publisher('apriltags', PoseWithCovarianceStamped, self._publishLandmarks)
+        self.landmark_publisher = rospy.Publisher('apriltags', PoseWithCovarianceStamped)
     
         # subscribe to location on map
         rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
