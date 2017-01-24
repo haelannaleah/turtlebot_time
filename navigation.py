@@ -270,8 +270,8 @@ class Navigation(Motion):
         
         x, y, _ = np.dot(translation_matrix, local_position)
 
-        location_msg.pose.pose.position.x = self.landmarks[nearby.id][0] - x
-        location_msg.pose.pose.position.y = self.landmarks[nearby.id][1] - y
+        location_msg.pose.pose.position.x = self.floorPlan.landmarks[nearby.id][0] - x
+        location_msg.pose.pose.position.y = self.floorPlan.landmarks[nearby.id][1] - y
         location_msg.pose.pose.position.z = 0
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
