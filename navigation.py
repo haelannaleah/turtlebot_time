@@ -248,7 +248,7 @@ class Navigation(Motion):
         # create translate matrix (to get back to the global original frame)
         theta = -radians(tf.transformations.euler_from_quaternion(self.cur_pose[1])[-1])
         cur_x, cur_y = self.cur_pose[0]
-        translation_matrix = np.array([[cos(theta), -sin(theta), cur_t],
+        translation_matrix = np.array([[cos(theta), -sin(theta), cur_x],
                                        [sin(theta), cos(theta) , cur_y],
                                        [0         , 0          , 1    ]])
         
