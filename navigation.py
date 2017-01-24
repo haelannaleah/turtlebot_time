@@ -277,7 +277,10 @@ class Navigation(Motion):
 #        location_msg.pose.position.z = 0
 #
         # TODO: There's some sort of transformation that needs to take place here
-        location_msg.pose.pose.orientation = nearby.pose.pose.orientation
+        #location_msg.pose.pose.orientation = nearby.pose.pose.orientation
+        _, _, qz, qw = tf.transformations.quaternion_from_euler([0,0,theta])
+        location_msg.pose.pose.orientation.z = qz
+        location_msg.pose.pose.orientation.w = qw
         
         location_msg.pose.covariance = [0.0001, 0.0, 0.0, 0.0, 0.0, 0.0,
                                         0.0, 0.0001, 0.0, 0.0, 0.0, 0.0,
