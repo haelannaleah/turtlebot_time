@@ -270,8 +270,8 @@ class Navigation(Motion):
         
         x, y, _ = np.dot(translation_matrix, local_position)
 
-        location_msg.pose.pose.position.x = x
-        location_msg.pose.pose.position.y = y
+        location_msg.pose.pose.position.x = self.landmarks[nearby.id][0] - x
+        location_msg.pose.pose.position.y = self.landmarks[nearby.id][1] - y
         location_msg.pose.pose.position.z = 0
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
@@ -286,12 +286,12 @@ class Navigation(Motion):
         location_msg.pose.pose.orientation.z = qz
         location_msg.pose.pose.orientation.w = qw
         
-        location_msg.pose.covariance = [0.0001, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                        0.0, 0.0001, 0.0, 0.0, 0.0, 0.0,
-                                        0.0, 0.0, 0.0001, 0.0, 0.0, 0.0,
-                                        0.0, 0.0, 0.0, 0.0001, 0.0, 0.0,
-                                        0.0, 0.0, 0.0, 0.0, 0.0001, 0.0,
-                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0001]
+        location_msg.pose.covariance = [0.00001, 0.0, 0.0, 0.0, 0.0, 0.0,
+                                        0.0, 0.00001, 0.0, 0.0, 0.0, 0.0,
+                                        0.0, 0.0, 0.00001, 0.0, 0.0, 0.0,
+                                        0.0, 0.0, 0.0, 0.00001, 0.0, 0.0,
+                                        0.0, 0.0, 0.0, 0.0, 0.00001, 0.0,
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.00001]
         
         self.landmark_publisher.publish(location_msg)
         self._logger.debug("Published location: " + str(location_msg))
