@@ -239,14 +239,14 @@ class Navigation(Motion):
         self._logger.info("Spotted landmark: " + str(nearby.id))
         
         # get the local position (such that the z and x axis aligns with the x and y axis in the global frame
-        local_position = np.array([nearby.pose.pose.position.z],[-nearby.pose.pose.position.x], [1])
+        local_position = np.array([[nearby.pose.pose.position.z],[-nearby.pose.pose.position.x], [1]])
         
         # create translate matrix (to get back to the global original frame)
         theta = -radians(tf.transformations.euler_from_quaternion(self.cur_pose[1])[-1])
         cur_x, cur_y = self.cur_pose[0]
-        translation_matrix = np.array([cos(theta), -sin(theta), cur_t],
-                                      [sin(theta), cos(theta) , cur_y],
-                                      [0         , 0          , 1    ])
+        translation_matrix = np.array([[cos(theta), -sin(theta), cur_t],
+                                       [sin(theta), cos(theta) , cur_y],
+                                       [0         , 0          , 1    ]])
         
         # note that in april tag messages, z position is forward displacement and x is horizontal displacement
 #        tag_relative_position = (nearby.pose.pose.position.z, nearby.pose.pose.position.x)
