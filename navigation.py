@@ -220,10 +220,13 @@ class Navigation(Motion):
             # only include
             tags = data.markers
             self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
+            print "tag visible"
             
             if len(self.landmarks) > 0:
                 if self.cur_pose is not None:
                     self._publishLandmarks()
+                else:
+                    print "cur pose empty"
             else:
                 self.landmarks = None
         else:
