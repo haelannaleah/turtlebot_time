@@ -222,7 +222,8 @@ class Navigation(Motion):
             self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
             
             if len(self.landmarks) > 0:
-                self._publishLandmarks()
+                if self.cur_pose is not None:
+                    self._publishLandmarks()
             else:
                 self.landmarks = None
         else:
