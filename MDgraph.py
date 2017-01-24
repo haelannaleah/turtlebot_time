@@ -30,8 +30,8 @@ class FloorPlan():
                     on the floorplan.
         """
         
-        self.landmarks = set(landmarks)
-        self.rooms = set(rooms)
+        self.landmarks = dict(landmarks)
+        self.rooms = dict(rooms)
         self.graph = {}
         for point_id in point_ids:
             self.graph[point_id] = Waypoint(locations[point_id], neighbors[point_id], True)
