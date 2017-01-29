@@ -26,6 +26,9 @@ class AprilTester():
     def tagCallback(self, data):
         """Extract Euler angle"""
         self.tags = data.markers if data.markers else None
+    
+    def logdata(self, data, name):
+        self._logger.debug((round(elt, 5) for elt in data), name)
 
     def printOrientation(self):
         if self.tags is None:
@@ -34,7 +37,7 @@ class AprilTester():
         for tag in self.tags:
             q = tag.pose.pose.orientation
             euler_angle = [degrees(angle) for angle in tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])]
-            self._logger.debug(euler_angle, "orient of " + str(tag.id))
+            self.logdata(euler_angle, "orient of " + str(tag.id))
 
     def printPosition(self):
         if self.tags is None:
@@ -42,7 +45,7 @@ class AprilTester():
         
         for tag in self.tags:
             p = tag.pose.pose.position
-            self._logger.debug((p.x,p.y,p.z), "pos of " + str(tag.id))
+            self.logdata((p.x,p.y,p.z), "pos of " + str(tag.id))
 
     def printTag(self):
         """Print tag data with Euler Angle"""
