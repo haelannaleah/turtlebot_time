@@ -10,7 +10,7 @@ class AprilTester():
         """Set up a node for extracting roll/pitch/yaw data from AprilTag"""
         rospy.init_node('AprilTester', anonymous = False)
         self._logger = Logger("AprilTester")
-        
+        self._logger.info("hello world")
         
         self.tags = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self.tagCallback, queue_size=1)
