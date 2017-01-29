@@ -31,9 +31,9 @@ class AprilTester():
             return
 
         for tag in self.tags:
-            p = self.tag.pose.pose.position
+            p = tag.pose.pose.position
             self._logger.debug((p.x,p.y,p.z), "position of " + str(tag.id))
-            q = self.tag.pose.pose.orientation
+            q = tag.pose.pose.orientation
             euler_angle = tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
             self._logger.debug(euler_angle, "orientation of " + str(tag.id))
 
