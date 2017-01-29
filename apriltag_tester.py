@@ -2,6 +2,7 @@ import rospy
 import tf
 
 from ar_track_alvar_msgs.msg import AlvarMarkers
+from math import degrees
 
 from logger import Logger
 
@@ -18,8 +19,8 @@ class AprilTester():
         rate = rospy.Rate(100)
     
         while not rospy.is_shutdown():
-            #self.printOrientation()
-            self.printPosition()
+            self.printOrientation()
+            #self.printPosition()
             rate.sleep()
 
     def tagCallback(self, data):
@@ -32,7 +33,7 @@ class AprilTester():
         
         for tag in self.tags:
             q = tag.pose.pose.orientation
-            euler_angle = tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
+            euler_angle = [degrees(angle) for angle in tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])]
             self._logger.debug(euler_angle, "orient of " + str(tag.id))
 
     def printPosition(self):
