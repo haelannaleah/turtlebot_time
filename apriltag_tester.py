@@ -55,10 +55,10 @@ class AprilTester():
 
         for tag in self.tags:
             p = tag.pose.pose.position
-            self._logger.debug((p.x,p.y,p.z), " posit of " + str(tag.id))
+            self.logdata((p.x,p.y,p.z), " posit of " + str(tag.id))
             q = tag.pose.pose.orientation
             euler_angle = tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
-            self._logger.debug(euler_angle, "orient of " + str(tag.id))
+            self.logdata(euler_angle, "orient of " + str(tag.id))
 
 if __name__ == "__main__":
     AprilTester()
