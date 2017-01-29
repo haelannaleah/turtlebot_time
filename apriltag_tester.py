@@ -19,8 +19,8 @@ class AprilTester():
         rate = rospy.Rate(100)
     
         while not rospy.is_shutdown():
-            self.printOrientation()
-            #self.printPosition()
+            #self.printOrientation()
+            self.printPosition()
             rate.sleep()
 
     def tagCallback(self, data):
