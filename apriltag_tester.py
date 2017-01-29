@@ -28,7 +28,7 @@ class AprilTester():
         self.tags = data.markers if data.markers else None
     
     def logdata(self, data, name):
-        self._logger.debug([round(elt, 5) for elt in data)], name)
+        self._logger.debug([round(elt, 5) for elt in data], name)
 
     def printOrientation(self):
         if self.tags is None:
