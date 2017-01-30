@@ -30,8 +30,9 @@ class AprilTester():
         self.prettyPrintData(euler_angle, "orient of " + str(tag.id))
     
     def printPosition(self, tag):
+        """Print position in meters (relative to the camera"""
         p = tag.pose.pose.position
-        self.prettyPrintData((p.x,p.y,p.z), "pos of " + str(tag.id))
+        self.prettyPrintData((p.x,p.y,p.z), "   pos of " + str(tag.id))
 
     def testOrientation(self):
         if self.tags is None:
