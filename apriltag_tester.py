@@ -16,37 +16,44 @@ class AprilTester():
         self.tags = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self.tagCallback, queue_size=1)
         
-        rate = rospy.Rate(100)
+        rate = rospy.Rate(50)
     
         while not rospy.is_shutdown():
             self.printTag()
-            #self.printOrientation()
-            #self.printPosition()
+            #self.testOrientation()
+            #self.testPosition()
             rate.sleep()
 
     def tagCallback(self, data):
-        """Extract Euler angle"""
+        """Extract tag data from the ar_pose_marker topic."""
         self.tags = data.markers if data.markers else None
     
-    def logdata(self, data, name):
-        self._logger.debug(["{: 6f}".format(elt) for elt in data], name)
+    def prettyPrintData(self, data, name):
+        self._logger.debug([", ".join("{: 6f}".format(elt) for elt in data)], name)
+    
+    def printOrientation(self, tag):
+        """Print the AprilTag orientation as a Euler Angle in degrees."""
+        q = tag.pose.pose.orientation
+        euler_angle = [degrees(angle) for angle in tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])]
+        self.prettyPrintData(euler_angle, "orient of " + str(tag.id))
+    
+    def printPosition(self, tag):
+        p = tag.pose.pose.position
+        self.prettyPrintData((p.x,p.y,p.z), "pos of " + str(tag.id))
 
-    def printOrientation(self):
+    def testOrientation(self):
         if self.tags is None:
             return
         
         for tag in self.tags:
-            q = tag.pose.pose.orientation
-            euler_angle = [degrees(angle) for angle in tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])]
-            self.logdata(euler_angle, "orient of " + str(tag.id))
+            self.printOrientation(tag)
 
-    def printPosition(self):
+    def testPosition(self):
         if self.tags is None:
             return
     
         for tag in self.tags:
-            p = tag.pose.pose.position
-            self.logdata((p.x,p.y,p.z), "pos of " + str(tag.id))
+            self.printPosition(tag)
 
     def printTag(self):
         """Print tag data with Euler Angle"""
@@ -54,11 +61,8 @@ class AprilTester():
             return
 
         for tag in self.tags:
-            p = tag.pose.pose.position
-            self.logdata((p.x,p.y,p.z), " posit of " + str(tag.id))
-            q = tag.pose.pose.orientation
-            euler_angle = tf.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
-            self.logdata(euler_angle, "orient of " + str(tag.id))
+            self.printPosition(tag)
+            self.printOrientation(tag)
 
 if __name__ == "__main__":
     AprilTester()
