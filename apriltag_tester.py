@@ -16,13 +16,7 @@ class AprilTester():
         self.tags = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self.tagCallback, queue_size=1)
         
-        rate = rospy.Rate(50)
-    
-        while not rospy.is_shutdown():
-            self.printTag()
-            #self.testOrientation()
-            #self.testPosition()
-            rate.sleep()
+        self.rate = rospy.Rate(50)
 
     def tagCallback(self, data):
         """Extract tag data from the ar_pose_marker topic."""
@@ -65,4 +59,12 @@ class AprilTester():
             self.printOrientation(tag)
 
 if __name__ == "__main__":
-    AprilTester()
+    # instantiate tester object
+    tester = AprilTester()
+    
+    # begin test
+    while not rospy.is_shutdown():
+        self.printTag()
+        #self.testOrientation()
+        #self.testPosition()
+        rate.sleep()
