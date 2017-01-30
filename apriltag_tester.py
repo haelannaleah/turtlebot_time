@@ -6,6 +6,8 @@ from math import degrees
 
 from logger import Logger
 
+METER_TO_INCH = 39.3701
+
 class AprilTester():
     def __init__(self, metric = True):
         """Set up a node for extracting roll/pitch/yaw data from AprilTag"""
@@ -44,9 +46,9 @@ class AprilTester():
         self.prettyPrintData(euler_angle, "orient of " + str(tag.id))
     
     def printPositionImperial(self, tag):
-        """Print position in meters (relative to the camera in feet)"""
+        """Print position in meters (relative to the camera in inches)"""
         p = tag.pose.pose.position
-        self.prettyPrintData([3.28084 * coord for coord in (p.x,p.y,p.z)], "   pos of " + str(tag.id))
+        self.prettyPrintData([METER_TO_INCH * coord for coord in (p.x,p.y,p.z)], "   pos of " + str(tag.id))
     
     def printPositionMetric(self, tag):
         """Print position in meters (relative to the camera in meters)"""
