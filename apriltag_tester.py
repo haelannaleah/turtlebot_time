@@ -21,7 +21,7 @@ class AprilTester():
         self.tags = data.markers if data.markers else None
     
     def prettyPrintData(self, data, name):
-        self._logger.debug([", ".join("{: 6f}".format(elt) for elt in data)], name)
+        self._logger.debug(["{: 6f}".format(elt) for elt in data], name)
     
     def printOrientation(self, tag):
         """Print the AprilTag orientation as a Euler Angle in degrees."""
