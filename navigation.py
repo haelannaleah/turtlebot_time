@@ -271,8 +271,8 @@ class Navigation(Motion):
         
         x, y, _ = np.dot(translation_matrix, local_position)
 
-        location_msg.pose.pose.position.x = 0#float(self.floorPlan.landmarks[nearby.id][0] - x)
-        location_msg.pose.pose.position.y = 0#float(self.floorPlan.landmarks[nearby.id][1] - y)
+        location_msg.pose.pose.position.x = 1#float(self.floorPlan.landmarks[nearby.id][0] - x)
+        location_msg.pose.pose.position.y = 1#float(self.floorPlan.landmarks[nearby.id][1] - y)
         location_msg.pose.pose.position.z = 0
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
@@ -295,7 +295,7 @@ class Navigation(Motion):
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         self.landmark_publisher.publish(location_msg)
-        self.landmark_broadcaster.sendTransform((0,0,0), (0,0,0,1), rospy.Time.now(), 'apriltags', 'world')
+        self.landmark_broadcaster.sendTransform((1,1,0), (0,0,0,1), rospy.Time.now(), 'apriltags', 'world')
 #        self.landmark_broadcaster((location_msg.pose.pose.position.x, location_msg.pose.pose.position.y,0),
 #                                  (0,0,location_msg.pose.pose.orientation.z, location_msg.pose.pose.orientation.w),
 #                                  'apriltags',
