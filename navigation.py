@@ -48,6 +48,7 @@ class Navigation(Motion):
         self.landmarks = None
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._aprilTagCallback, queue_size=1)
         self.landmark_publisher = rospy.Publisher('set_pose', PoseWithCovarianceStamped)
+        self.landmark_broadcaster = tf.TransformBroadcaster()
     
         # subscribe to location on map
         rospy.Subscriber('map_frame', PoseStamped, self._ekfCallback)
@@ -293,7 +294,12 @@ class Navigation(Motion):
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
-        self.landmark_publisher.publish(location_msg)
+        #self.landmark_publisher.publish(location_msg)
+        self.landmark_publisher((location_msg.pose.pose.position.x, location_msg.pose.pose.position.y,0),
+                                (0,0,location_msg.pose.pose.orientation.z, location_msg.pose.pose.orientation.w),
+                                'apriltags',
+                                'world')
+                                
         self._logger.debug("Published location: " + str(location_msg))
 
     
