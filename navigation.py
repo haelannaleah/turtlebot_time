@@ -271,9 +271,9 @@ class Navigation(Motion):
         
         x, y, _ = np.dot(translation_matrix, local_position)
 
-        location_msg.pose.pose.position.x = 0#float(self.floorPlan.landmarks[nearby.id][0] - x)
-        location_msg.pose.pose.position.y = 0#float(self.floorPlan.landmarks[nearby.id][1] - y)
-        location_msg.pose.pose.position.z = 0
+        location_msg.pose.pose.position.x = 5#float(self.floorPlan.landmarks[nearby.id][0] - x)
+        location_msg.pose.pose.position.y = 5#float(self.floorPlan.landmarks[nearby.id][1] - y)
+        location_msg.pose.pose.position.z = 5
 #
 #        # note that in april tag messages, z position is forward displacement and x is horizontal displacement
 #        # in map pose messages, the x is forward displacement and the y is horizontal displacement
@@ -284,8 +284,8 @@ class Navigation(Motion):
         # TODO: There's some sort of transformation that needs to take place here
         #location_msg.pose.pose.orientation = nearby.pose.pose.orientation
         _, _, qz, qw = tf.transformations.quaternion_from_euler(0,0,theta)
-        location_msg.pose.pose.orientation.z = 0#qz
-        location_msg.pose.pose.orientation.w = 0#qw
+        location_msg.pose.pose.orientation.z = qz
+        location_msg.pose.pose.orientation.w = qw
         
         location_msg.pose.covariance = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -295,7 +295,7 @@ class Navigation(Motion):
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         self.landmark_publisher.publish(location_msg)
-        self.landmark_broadcaster.sendTransform((0,0,0), (0,0,0,1), rospy.Time.now(), 'apriltags', 'world')
+        self.landmark_broadcaster.sendTransform((5,5,5), (0,0,0,1), rospy.Time.now(), 'apriltags', 'world')
 #        self.landmark_broadcaster((location_msg.pose.pose.position.x, location_msg.pose.pose.position.y,0),
 #                                  (0,0,location_msg.pose.pose.orientation.z, location_msg.pose.pose.orientation.w),
 #                                  'apriltags',
