@@ -295,11 +295,12 @@ class Navigation(Motion):
                                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         
         #self.landmark_publisher.publish(location_msg)
-        self.landmark_publisher((location_msg.pose.pose.position.x, location_msg.pose.pose.position.y,0),
-                                (0,0,location_msg.pose.pose.orientation.z, location_msg.pose.pose.orientation.w),
-                                'apriltags',
-                                'world')
-                                
+        self.landmark_broadcaster((0,0,0), (0,0,0,1), 'apriltags', 'world')
+#        self.landmark_broadcaster((location_msg.pose.pose.position.x, location_msg.pose.pose.position.y,0),
+#                                  (0,0,location_msg.pose.pose.orientation.z, location_msg.pose.pose.orientation.w),
+#                                  'apriltags',
+#                                  'world')
+
         self._logger.debug("Published location: " + str(location_msg))
 
     
