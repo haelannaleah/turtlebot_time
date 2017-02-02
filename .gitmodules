@@ -1,0 +1,3 @@
+[submodule "catkin_workspace/src/aprilslam"]
+	path = catkin_workspace/src/aprilslam
+	url = https://github.com/ProjectArtemis/aprilslam
