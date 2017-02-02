@@ -31,3 +31,16 @@ sudo apt-get install ros-indigo-turtlebot ros-indigo-turtlebot-apps ros-indigo-t
 # set up custom packages
 echo "source /catkin_workspace/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
+
+# set up thing for april slam depends
+mkdir ~/deps
+cd ~/deps
+wget https://research.cc.gatech.edu/borg/sites/edu.borg/files/downloads/gtsam-3.2.1.tgz
+tar -xvf gtsam-3.2.1.tgz
+cd gtsam-3.2.1
+mkdir build
+cd build
+cmake ..
+make install
+cd ~/
+rm -rf deps
