@@ -82,10 +82,16 @@ class AprilTester():
             self._logger.error(e)
             return
         
+        p = nearby.pose.pose.position
+        q = nearby.pose.pose.orientation
+        
+        transformed_q = tf.multiply_quaternion([q.x,q.y,q.z,q.w],orientation)
+        transformed_p = [position[i] + val for i, val in enumerate([p.x,p.y,p.z])]
+    
         #print position
         #print orientation
-        print [METER_TO_INCH * arg for arg in position]
-        print [degrees(arg) for arg in tf.transformations.euler_from_quaternion(orientation)]
+        print [METER_TO_INCH * arg for arg in transformed_p]
+        print [degrees(arg) for arg in tf.transformations.euler_from_quaternion(transformed_q)]
         return
         
         # get the local position (such that the z and x axis aligns with the x and y axis in the global frame
