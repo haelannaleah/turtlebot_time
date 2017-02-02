@@ -78,6 +78,7 @@ class AprilTester():
         try:
             position, orientation = self.transform_listener.lookupTransform('/ar_marker_' + str(nearby.id), '/base_footprint',  rospy.Time(0))
         except:
+            print "transform failed"
             return
         
         print position

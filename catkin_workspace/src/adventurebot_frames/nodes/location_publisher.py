@@ -23,8 +23,8 @@ class FramePublisher():
         self.rate = rospy.Rate(100)
         
         while not rospy.is_shutdown():
-            self._publish("map", self.map_publisher)
-            self._publish("odom", self.odom_publisher)
+            self._publish('map', self.map_publisher)
+            self._publish('odom', self.odom_publisher)
             self.rate.sleep()
 
     def _publish(self, frame, frame_publisher):
@@ -36,7 +36,7 @@ class FramePublisher():
                 frame_publisher: A rospy publisher object on which to publish that transformation
         """
         try:
-            position, orientation = self.transform_listener.lookupTransform(frame, "/base_footprint",  rospy.Time(0))
+            position, orientation = self.transform_listener.lookupTransform(frame, '/base_footprint',  rospy.Time(0))
             
             # create new PoseStamped object
             frame_pose = PoseStamped()
