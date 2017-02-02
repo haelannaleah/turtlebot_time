@@ -15,7 +15,7 @@ from math import radians, atan2, cos, sin, pi
 from time import time
 
 from logger import Logger
-from MDgraph import FloorPlan
+from floorplan import FloorPlan
 from motion import Motion
 
 class Navigation(Motion):
