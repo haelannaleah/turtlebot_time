@@ -77,7 +77,7 @@ class AprilTester():
         self._logger.info("Spotted landmark: " + str(nearby.id))
         
         try:
-            position, orientation = self.transform_listener.lookupTransform('/ar_marker_' + str(nearby.id), 'map',  rospy.Time(0))
+            position, orientation = self.transform_listener.lookupTransform('map', '/ar_marker_' + str(nearby.id),  rospy.Time(0))
         except Exception as e:
             self._logger.error(e)
             return
