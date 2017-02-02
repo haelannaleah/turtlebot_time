@@ -36,6 +36,7 @@ class FramePublisher():
                 frame_publisher: A rospy publisher object on which to publish that transformation
         """
         try:
+            # transformation from source to target
             position, orientation = self.transform_listener.lookupTransform('/base_link', map, rospy.Time(0))
             
             # create new PoseStamped object

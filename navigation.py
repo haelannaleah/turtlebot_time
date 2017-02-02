@@ -221,7 +221,6 @@ class Navigation(Motion):
             # only include
             tags = data.markers
             self.landmarks = [tag for tag in data.markers if tag.id in self.floorPlan.landmarks]
-            print "tag visible"
             
             if len(self.landmarks) > 0:
                 if self.cur_pose is not None:
@@ -235,6 +234,7 @@ class Navigation(Motion):
     
     def _publishLandmarks(self):
         """Publish information about current position based on landmarks."""
+        pass
         # TODO
         # working development has been moved to the apriltag test class
     
