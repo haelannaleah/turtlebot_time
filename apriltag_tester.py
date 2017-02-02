@@ -75,8 +75,16 @@ class AprilTester():
         nearby = min(self.tags, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         self._logger.info("Spotted landmark: " + str(nearby.id))
         
+        try:
+            position, orientation = self.transform_listener.lookupTransform('ar_marker_' + str(nearby.id), '/base_footprint',  rospy.Time(0))
+        except:
+            return
+        
+        print position
+        print orientation
+        return
+        
         # get the local position (such that the z and x axis aligns with the x and y axis in the global frame
-        local_position = np.array([[nearby.pose.pose.position.z],[-nearby.pose.pose.position.x], [1]])
         
         # create translate matrix (to get back to the global original frame)
         #theta = -radians(tf.transformations.euler_from_quaternion(self.cur_pose[1])[-1])
