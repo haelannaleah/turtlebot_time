@@ -23,6 +23,7 @@ class AprilTester():
         rospy.Subscriber('/ar_pose_marker', AlvarMarkers, self._tagCallback, queue_size=1)
         self.landmark_publisher = rospy.Publisher('apriltags', PoseWithCovarianceStamped)
         self.landmark_broadcaster = tf.TransformBroadcaster()
+        self.transform_listener = tf.TransformListener()
     
         if metric:
             self.printOrientation = self.printOrientationMetric
