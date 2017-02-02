@@ -85,7 +85,7 @@ class AprilTester():
         p = nearby.pose.pose.position
         q = nearby.pose.pose.orientation
         
-        transformed_q = tf.multiply_quaternion([q.x,q.y,q.z,q.w],orientation)
+        transformed_q = tf.quaternion_multiply([q.x,q.y,q.z,q.w],orientation)
         transformed_p = [position[i] + val for i, val in enumerate([p.x,p.y,p.z])]
     
         #print position
