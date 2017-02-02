@@ -101,8 +101,8 @@ class AprilTester():
         location_msg.header.stamp = rospy.Time.now()
         location_msg.header.frame_id = 'apriltags'
        
-        x, y, _ = np.dot(translation_matrix, local_position)
-       
+#        x, y, _ = np.dot(translation_matrix, local_position)
+
         location_msg.pose.pose.position.x = 5#float(self.floorPlan.landmarks[nearby.id][0] - x)
         location_msg.pose.pose.position.y = 5#float(self.floorPlan.landmarks[nearby.id][1] - y)
         location_msg.pose.pose.position.z = 0
