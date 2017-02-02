@@ -34,7 +34,7 @@ class AprilTester():
             self.tags = data.markers
             self._publishLandmarks()
         else:
-            self.tags = Noneif data.markers
+            self.tags = None
     
     def _prettyPrintData(self, data, name):
         """Pretty print our data."""
