@@ -70,7 +70,7 @@ class AprilTester():
         # should be a good time...
         
         # get the closest April tag, in case we see more than one
-        nearby = min(self.landmarks, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
+        nearby = min(self.tags, key = lambda t: t.pose.pose.position.x**2 + t.pose.pose.position.y**2)
         self._logger.info("Spotted landmark: " + str(nearby.id))
         
         # get the local position (such that the z and x axis aligns with the x and y axis in the global frame
