@@ -1,6 +1,8 @@
 import rospy
 import tf
 
+import numpy as np
+
 from ar_track_alvar_msgs.msg import AlvarMarkers
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
 from math import degrees
