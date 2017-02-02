@@ -56,12 +56,12 @@ class AprilTester():
     def printPositionImperial(self, tag):
         """Print position in meters (relative to the camera in inches)"""
         p = tag.pose.pose.position
-        self.prettyPrintData([METER_TO_INCH * coord for coord in (p.x,p.y,p.z)], "   pos of " + str(tag.id))
+        self._prettyPrintData([METER_TO_INCH * coord for coord in (p.x,p.y,p.z)], "   pos of " + str(tag.id))
     
     def printPositionMetric(self, tag):
         """Print position in meters (relative to the camera in meters)"""
         p = tag.pose.pose.position
-        self.prettyPrintData((p.x,p.y,p.z), "   pos of " + str(tag.id))
+        self._prettyPrintData((p.x,p.y,p.z), "   pos of " + str(tag.id))
     
     def _publishLandmarks(self):
         """Publish information about current position based on landmarks."""
