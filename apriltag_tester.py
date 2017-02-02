@@ -82,8 +82,10 @@ class AprilTester():
             self._logger.error(e)
             return
         
-        print [METER_TO_INCH * arg for arg in position]
-        print [degrees(arg) for arg in tf.transformations.euler_from_quaternion(orientation)]
+        print position
+        print orientation
+        #print [METER_TO_INCH * arg for arg in position]
+        #print [degrees(arg) for arg in tf.transformations.euler_from_quaternion(orientation)]
         return
         
         # get the local position (such that the z and x axis aligns with the x and y axis in the global frame
