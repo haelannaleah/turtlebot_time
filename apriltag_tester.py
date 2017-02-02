@@ -178,7 +178,7 @@ if __name__ == "__main__":
     
     # begin test
     while not rospy.is_shutdown():
-        tester.printTag()
+        #tester.printTag()
         #tester.testOrientation()
         #tester.testPosition()
         rate.sleep()
