@@ -6,7 +6,7 @@ import MD2
 from logger import Logger
 from navigation import Navigation
 from sensing import Sensors
-
+ 
 class Adventurebot():
     def __init__(self):
         rospy.init_node('Adventurebot', anonymous = False)

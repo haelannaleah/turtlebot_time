@@ -61,7 +61,7 @@ class Navigation(Motion):
         
     def center(self):
         """Center robot in an open space, if possible."""
-        # TODO
+        # TODO TODO
         pass
         
     def intelligentAvoid(self, rec_turn, obstacle):
